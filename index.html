@@ -99,9 +99,7 @@
 
     <!-- UI Menus -->
     <div id="login-menu" class="overlay">
-                <div class="top-buttons">
-        <button id="fullscreen-btn" class="hud-btn">⛶</button></div>
-		<div class="login-box">
+        <div class="login-box">
             <h2>Masuk Dulu Yuk!</h2>
             <div id="login-error">Nama dan Sekolah harus diisi!</div>
             <div class="input-group"><label>Nama Kamu:</label><input type="text" id="player-name" class="input-field" autocomplete="off"></div>
@@ -834,12 +832,12 @@ function submitScoreToGAS() {
     formData.append('name', currentPlayer.name);
     formData.append('school', currentPlayer.school);
     formData.append('score', score);
-    fetch(GAS_URL, { method: 'POST', body: formData, mode: 'no-cors' }).catch(e => console.error(e));
+    fetch(GAS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: payload });
 }
 
 function loadLeaderboard() {
     document.getElementById('lb-content').innerHTML = '<div class="loading-text">Memuat data dari server...</div>';
-    fetch(GAS_URL + "?action=getScores")
+    fetch(GAS_URL + "?action=getTop")
     .then(res => res.json())
     .then(data => {
         let html = 'https://script.google.com/macros/s/AKfycbweBUj24ZH6syZAf83BoKrzHMQ6-jUFrIVuzxs23mgx4rn3VOoRUzYvwe8MHcKBoNhF/exec';
