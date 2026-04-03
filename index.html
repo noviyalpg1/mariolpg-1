@@ -165,7 +165,6 @@
         }
 
         #message-overlay { position: fixed; background: rgba(0,0,0,0.8); color: white; z-index: 1300;}
-        #message-text { font-size: 32px; text-align: center; text-shadow: 3px 3px 0 #000; margin-bottom: 30px;}
     </style>
 </head>
 <body>
@@ -292,10 +291,10 @@
         </div>
     </div>
 
-    <!-- Modal Game Over -->
+    <!-- Modal Game Over & Universal Message -->
     <div id="message-overlay" class="overlay hidden" style="z-index: 1300;">
-        <div class="box-ui message-box">
-            <img src="https://imgur.com/UcopyEK.png" alt="Game Over" class="victory-img">
+        <div id="msg-box" class="box-ui message-box">
+            <img id="msg-image" src="https://imgur.com/UcopyEK.png" alt="Message Icon" class="victory-img">
             <h1 id="message-text" class="message-title">Game Over</h1>
             <button class="btn" id="msg-btn" style="margin-top: 20px; font-size: 20px; padding: 15px 30px;">Lanjut</button>
         </div>
@@ -1155,7 +1154,7 @@ function loadLevel(lvlIndex) {
     let rawMap = maps[lvlIndex - 1];
     if(!rawMap) { 
         submitScoreToGAS();
-        showMessage("Selamat! Semua Level Selesai!", "Kembali ke Menu", () => showMainMenu()); 
+        showMessage("Selamat Semua Level Selesai", "Kembali ke Menu", () => showMainMenu(), true); 
         return; 
     }
 
@@ -1212,11 +1211,26 @@ document.getElementById('btn-next-level').onclick = () => {
 function showGameOver() {
     gameState = 'gameover'; stopBGM();
     submitScoreToGAS();
-    showMessage("Game Over", "Main Lagi", () => { score = 0; lives = 3; loadLevel(1); });
+    showMessage("Game Over", "Main Lagi", () => { score = 0; lives = 3; loadLevel(1); }, false);
 }
 
-function showMessage(msg, btnText, callback) {
-    document.getElementById('message-text').innerText = msg;
+function showMessage(msg, btnText, callback, isWin = false) {
+    const msgText = document.getElementById('message-text');
+    const msgBox = document.getElementById('msg-box');
+    const msgImg = document.getElementById('msg-image');
+
+    msgText.innerText = msg;
+    msgImg.src = isWin ? "https://imgur.com/x1XOhm6.png" : "https://imgur.com/UcopyEK.png";
+    
+    if (isWin) {
+        msgBox.className = "box-ui victory-box";
+        msgText.className = "victory-title";
+        msgText.style.fontFamily = "'Fredoka One', cursive";
+    } else {
+        msgBox.className = "box-ui message-box";
+        msgText.className = "message-title";
+    }
+
     const btn = document.getElementById('msg-btn');
     btn.innerText = btnText;
     btn.onclick = () => { document.getElementById('message-overlay').classList.add('hidden'); callback(); };
