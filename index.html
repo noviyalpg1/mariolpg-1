@@ -82,22 +82,44 @@
         .answer-slot { display: inline-block; min-width: 60px; height: 35px; border-bottom: 3px solid #333; margin: 0 5px; text-align: center; color: #e52521; font-weight: bold; cursor: pointer; line-height: 35px; padding: 0 10px;}
         .answer-slot.filled { border-bottom: 3px solid #4caf50; color: #4caf50; }
 
-        /* Papan Skor Baru & Podium */
-        .box-ui { background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 20px; border: 5px solid #fbd000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 90%; max-width: 500px; font-family: sans-serif; max-height: 90vh; overflow-y: auto;}
-        .box-ui h2 { color: #e52521; margin-top: 0; font-family: 'Fredoka One', cursive; font-size: 24px;}
-        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 5px; margin: 20px 0; height: 120px; }
-        .podium { color: #000; border-radius: 10px 10px 0 0; width: 30%; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 5px; font-weight: bold; font-size: 14px; box-shadow: inset 0 -5px 0 rgba(0,0,0,0.2);}
-        .podium .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 5px; }
-        .p1 { height: 110px; background: #FFD700; font-size: 16px; border: 2px solid #B8860B;} 
-        .p2 { height: 85px; background: #C0C0C0; border: 2px solid #808080;} 
-        .p3 { height: 60px; background: #CD7F32; border: 2px solid #8B4513;} 
+        /* --- PAPAN SKOR & PODIUM --- */
+        .box-ui { background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 20px; border: 5px solid #fbd000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 90%; max-width: 550px; font-family: sans-serif; max-height: 90vh; overflow-y: auto;}
+        .box-ui h2 { color: #e52521; margin-top: 0; font-family: 'Fredoka One', cursive; font-size: 28px; text-transform: uppercase; text-shadow: 1px 1px 0px #fff;}
         
-        .lb-list { background: rgba(0,0,0,0.05); border-radius: 15px; padding: 10px; text-align: left; margin-bottom: 15px; max-height: 180px; overflow-y: auto;}
-        .lb-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid rgba(0,0,0,0.1); }
-        .lb-rank { font-weight: bold; color: #e52521; width: 30px; font-size: 16px;}
-        .lb-name { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; color: #333; font-weight: bold;}
+        /* Memindahkan background ke layar utama modal dan membuat box agak transparan */
+        #leaderboard-modal { background: url('https://imgur.com/giQNSsR.png') center center / cover no-repeat; }
+        .leaderboard-box { background: rgba(0, 0, 0, 0.8); border-color: #fbd000; }
+        .leaderboard-box h2 { color: #fff; text-shadow: 2px 2px 0px #000, -2px -2px 0px #000, 2px -2px 0px #000, -2px 2px 0px #000; }
+        .leaderboard-box #lb-loading { color: #fff; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 8px; margin: 40px 0 20px 0; height: 160px; }
+        .podium { position: relative; color: white; border-radius: 15px 15px 0 0; width: 30%; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 25px; font-weight: bold; font-family: 'Fredoka One', cursive; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); box-shadow: 0 -5px 15px rgba(0,0,0,0.2), inset 0 -5px 0 rgba(0,0,0,0.2); transition: transform 0.3s ease;}
+        .podium:hover { transform: translateY(-5px); }
+        .podium .pod-rank { position: absolute; top: -20px; background: white; color: #333; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); border: 3px solid #fff; text-shadow: none; }
+        .podium.p1 .pod-rank { width: 55px; height: 55px; top: -27px; font-size: 24px; border-color: #FFD700; }
+        .podium .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 95%; font-size: 15px; margin-top: 8px; }
+        .podium .school { font-size: 10px; font-family: sans-serif; font-weight: normal; background: rgba(0,0,0,0.3); padding: 2px 5px; border-radius: 10px; margin: 3px 0; max-width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: none; }
+        .podium .score { font-size: 20px; margin-top: auto; padding-bottom: 8px; color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,0.4); }
+        
+        .p1 { height: 140px; background: linear-gradient(to bottom, #FFD700, #DAA520); border: 2px solid #B8860B; z-index: 3;} 
+        .p2 { height: 110px; background: linear-gradient(to bottom, #E0E0E0, #A9A9A9); border: 2px solid #808080; z-index: 2;} 
+        .p3 { height: 85px; background: linear-gradient(to bottom, #CD7F32, #8B4513); border: 2px solid #5C2E0B; z-index: 1;} 
+        
+        .lb-list { background: rgba(0,0,0,0.05); border-radius: 15px; padding: 10px; text-align: left; margin-bottom: 15px; max-height: 180px; overflow-y: auto; border: 2px solid rgba(0,0,0,0.1); }
+        
+        /* Adjusted for the new leaderboard background */
+        .leaderboard-box .lb-list { background: rgba(0,0,0,0.75); border-color: rgba(255,255,255,0.4); }
+        .leaderboard-box .lb-item { border-bottom-color: rgba(255,255,255,0.2); }
+        .leaderboard-box .lb-name { color: #fff; }
+        .leaderboard-box .lb-school { color: #ddd; }
+        .leaderboard-box .lb-pts { text-shadow: 1px 1px 1px #000; }
+        .leaderboard-box .lb-rank { color: #fbd000; text-shadow: 1px 1px 1px #000; }
+
+        .lb-item { display: flex; justify-content: space-between; padding: 10px 8px; border-bottom: 1px solid rgba(0,0,0,0.1); align-items: center; }
+        .lb-rank { font-weight: bold; color: #e52521; width: 35px; font-size: 18px; font-family: 'Fredoka One', cursive;}
+        .lb-name { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; color: #333; font-weight: bold; line-height: 1.2;}
         .lb-school { font-size: 11px; color: #777; display: block; font-weight: normal;}
-        .lb-pts { font-weight: bold; color: #4caf50; font-size: 16px;}
+        .lb-pts { font-weight: bold; color: #4caf50; font-size: 18px; font-family: 'Fredoka One', cursive;}
         #lb-loading { text-align: center; font-style: italic; color: #666; padding: 20px 0;}
 
         /* Efek UI Victory & Game Over Baru */
@@ -125,7 +147,15 @@
             .btn { font-size: 14px; padding: 8px 20px; }
             .small-title { font-size: 20px; margin-bottom: 5px; }
             .menu-buttons { gap: 8px; }
-            .box-ui { padding: 15px; }
+            .box-ui { padding: 15px; max-height: 95vh; }
+            .podium-container { margin: 30px 0 10px 0; height: 110px; }
+            .p1 { height: 100px; font-size: 13px;}
+            .p2 { height: 80px; font-size: 12px;}
+            .p3 { height: 60px; font-size: 11px;}
+            .podium { padding-top: 18px; }
+            .podium .pod-rank { width: 30px; height: 30px; top: -15px; font-size: 14px;}
+            .podium.p1 .pod-rank { width: 40px; height: 40px; top: -20px; font-size: 18px;}
+            .podium .name { margin-top: 4px; }
         }
 
         @media screen and (orientation: portrait) {
@@ -178,13 +208,28 @@
 
     <!-- Leaderboard Modal -->
     <div id="leaderboard-modal" class="overlay hidden">
-        <div class="box-ui">
+        <div class="box-ui leaderboard-box">
             <h2>🏆 Papan Skor Peringkat</h2>
             <div id="lb-loading">Memuat data dari server...</div>
             <div class="podium-container hidden" id="podium-container">
-                <div class="podium p2"><div class="name" id="pod-2-name">-</div><div id="pod-2-score">-</div></div>
-                <div class="podium p1"><div class="name" id="pod-1-name">-</div><div id="pod-1-score">-</div></div>
-                <div class="podium p3"><div class="name" id="pod-3-name">-</div><div id="pod-3-score">-</div></div>
+                <div class="podium p2">
+                    <div class="pod-rank">2</div>
+                    <div class="name" id="pod-2-name">-</div>
+                    <div class="school" id="pod-2-school">-</div>
+                    <div class="score" id="pod-2-score">-</div>
+                </div>
+                <div class="podium p1">
+                    <div class="pod-rank">👑 1</div>
+                    <div class="name" id="pod-1-name">-</div>
+                    <div class="school" id="pod-1-school">-</div>
+                    <div class="score" id="pod-1-score">-</div>
+                </div>
+                <div class="podium p3">
+                    <div class="pod-rank">3</div>
+                    <div class="name" id="pod-3-name">-</div>
+                    <div class="school" id="pod-3-school">-</div>
+                    <div class="score" id="pod-3-score">-</div>
+                </div>
             </div>
             <div class="lb-list hidden" id="lb-list"></div>
             <button class="btn" id="btn-close-lb" style="margin-top: 15px;">Tutup</button>
@@ -200,6 +245,7 @@
         <div class="top-buttons">
             <button id="fullscreen-hud-btn" class="hud-btn">⛶</button>
             <button id="bgm-btn" class="hud-btn active-bgm">🎵</button>
+            <button id="menu-btn" class="hud-btn" style="background: #e52521; color: white; border-color: white;">Menu</button>
         </div>
     </div>
 
@@ -226,10 +272,10 @@
     <div id="library-modal" class="overlay hidden">
         <div class="library-box">
             <h2>📚 Ruang Baca</h2>
-            <div id="lib-content-area" style="background:#f9f9f9; padding:15px; border-radius:10px; text-align:left; min-height:150px; font-size: 16px; line-height: 1.5; color: #333;"></div>
+            <div id="lib-content-area" style="background:#f9f9f9; max-height: 45vh; overflow-y: auto; padding:15px; border-radius:10px; text-align:left; min-height:150px; font-size: 16px; line-height: 1.5; color: #333;"></div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
                 <button id="lib-prev" class="btn btn-blue" style="padding:10px 15px; width:auto; font-size: 14px;">&laquo; Prev</button>
-                <span id="lib-page-indicator" style="font-weight:bold; color: #333;">1 / 3</span>
+                <span id="lib-page-indicator" style="font-weight:bold; color: #333;">1 / 4</span>
                 <button id="lib-next" class="btn btn-blue" style="padding:10px 15px; width:auto; font-size: 14px;">Next &raquo;</button>
             </div>
             <button class="btn" id="lib-close" style="margin-top:20px;">Selesai Belajar</button>
@@ -252,6 +298,7 @@
     <!-- Modal Game Over -->
     <div id="message-overlay" class="overlay hidden" style="z-index: 1300;">
         <div class="box-ui message-box">
+            <img src="https://imgur.com/UcopyEK.png" alt="Game Over" class="victory-img">
             <h1 id="message-text" class="message-title">Game Over</h1>
             <button class="btn" id="msg-btn" style="margin-top: 20px; font-size: 20px; padding: 15px 30px;">Lanjut</button>
         </div>
@@ -303,7 +350,7 @@ resizeCanvas();
 /** ASSETS */
 const assets = { player: new Image(), flag: new Image(), enemy: new Image() };
 assets.player.src = "https://imgur.com/z6sD9iS.png";
-assets.flag.src = "https://imgur.com/nlCH2HZ.png";
+assets.flag.src = "https://imgur.com/I2DODhL.png";
 assets.enemy.src = "https://imgur.com/sjcux6J.png";
 
 /** AUDIO SYSTEM */
@@ -325,8 +372,10 @@ function playSound(type) {
     else if (type === 'win') { osc.type = 'square'; osc.frequency.setValueAtTime(523, now); osc.frequency.setValueAtTime(659, now+0.2); osc.frequency.setValueAtTime(783, now+0.4); gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now + 1.0); osc.start(now); osc.stop(now + 1.0); }
 }
 
-let bgmEnabled = true, isBgmPlaying = false, nextNoteTime = 0, bgmStep = 0, bgmReqId;
+let bgmEnabled = true, isBgmPlaying = false, nextNoteTime = 0, bgmReqId;
 const marioMelody = [ 659,0,659,0,0,659,0,523,659,0,784,0,0,0,392,0,0,0,523,0,0,392,0,0,329,0,0,440,0,493,0,466,440,0,392,659,784,880,0,698,784,0,659,0,523,587,493,0,0,0 ];
+let bgmStep = 0;
+
 function scheduleBGM() {
     if (!isBgmPlaying || !audioCtx || !bgmEnabled) return;
     while (nextNoteTime < audioCtx.currentTime + 0.1) {
@@ -348,6 +397,11 @@ document.getElementById('bgm-btn').addEventListener('click', function() {
     else { this.classList.remove('active-bgm'); this.innerText = '🔇'; this.style.background = '#e52521'; this.style.color = '#fff'; stopBGM(); }
 });
 
+// Fitur Tombol Menu di HUD
+document.getElementById('menu-btn').addEventListener('click', function() {
+    showMainMenu();
+});
+
 /** MAPS & LOGIKA PIPA
  * G = Ground, B = Brick, ? = Koin, Q = Kuis, S = Flag/Finish, M = Jamur, E = Enemy
  * P = Pipa Atas Masuk (Ke Bawah), X = Pipa Bawah Keluar (Ke Atas), U = Tempat Keluar
@@ -358,16 +412,16 @@ const maps = [
         "                                                                 ",
         "                                                                 ",
         "                                                                 ",
-        "                                                               B ",
-        "                                                               B ",
-        "                                                               B ",
-        "                                         S   Q                 B ",
-        "                        B?M                                    B ",
-        "      M      Q                                                 B ",
-        "                  B?Q?BBBBB                BBBBB               B ",
-        "         E              BB                               Q     B ",
-        "      B?B   L           BB      E      P                       B ",
-        " R R      R l           R         R    p   E          X        B ",
+        "                                                                 ",
+        "                                                                 ",
+        "                                                                 ",
+        "                                            Q                    ",
+        "                        B?M                                      ",
+        "      M      Q                                                 S ",
+        "                  B?Q?BBBBB                BBBBB                 ",
+        "         E              BB                                QN     ",
+        "      B?B   L           BB      E      P              X          ",
+        " R R      R l           R         R    p   E          X     R    ",
         "GGGGGGGGGGGGGG  GGGGGGGGGGGGGGGGG GGGGGGGGGGGGGGGGGGGGGGGGGGGGGG ",
         "                                                                 ",
         "                                                                 ",
@@ -375,61 +429,61 @@ const maps = [
         "                          u                                      ",
         "                        NBBBB  BBBBBB                            ",
         "                        B  Q        B                            ",
-        "                        B     M                                  ",
-        "                        B  E     E  O                            ",
+        "                        B     M     BB                           ",
+        "                        B  E     E  OB                           ",
         "                        GGGGGGGGGGGGGGG                          ",
         "                                                                 "
     ],
     [ // LEVEL 2: Sedang (Soal Susun Kalimat)
-        "                                                                                                 ",
-        "                                                                                                 ",
-        "                                                                                                 ",
-        "                                                                                                 ",
-        "                                                                                         Q       ",
-        "                M                    Q    S                                                B     ",
-        "                       B?B                                         M                       B     ",
-        "      Q                         Q            E                                   GGGGGGGGGGB     ",
-        "         E     BB   B?Q?BBBBB                BBBBB?BB                    E             B         ",
-        "     BBSBB    BBB                        BQB                 Q       BB?BB         B             ",
-        "             NBBB             P          B?B       X                             B               ",
-        " R            BBBBB   E    B  p     E              X  E                  RR        B           ",
-        "GGGGGGGGGGGG  GGGGGGGGGGGGGG  GGGGGGGGGGGGGGGGGGGGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGGG             ",
-        "                                                                                                 ",
-        "                                                                                                 ",
-        "                          U                  M             ",
-        "                          u                      BBBB      ",
-        "                        BBBBB  BBBBB                       ",
-        "                                   B         ?BB           ",
+        "                                                                                                   ",
+        "                                                                                                   ",
+        "                                                                                                   ",
+        "                                                                                                S  ",
+        "                                                                                         Q         ",
+        "                M                         S        Q                                               ",
+        "                       B?B                                                                         ",
+        "      Q                               QN       E                   M                GGGGGGGGGGGGGG ",
+        "         E      BB   B?Q?BBBBB     Q           BBBBB?BB                    E         B             ",
+        "     BBBBB     BBB                         BBB                 Q       BB?BBN        B             ",
+        "              BBBBB             P          B?B       X                               B             ",
+        " R      R     BBBBBB   E        p     E     R        X  E                  RR        B             ",
+        "GGGGGGGGGGGG  GGGGGGGGGGGGGG  GGGGGGGGGGGGGGGGGGGGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGGGGG             ",
+        "                                                                                                   ",
+        "                                                 M                                                 ",
+        "                          U                                ",
+        "                          u                        BBBB    ",
+        "                        BBBB    BBBB                       ",
+        "                                   B           ?BB         ",
         "                             Q     B                       ",
-        "                        GGG  E     E           BB    O     ",
-        "                        GGGGGGGGGGGGGGGGG   GGGGGGGGGGG    ",
+        "                             E     E                   O   ",
+        "                        GGGGGGGGGGGGGGGGG   GGGGGGGGGGGG   ",
         "                                                           "
     ],
     [ // LEVEL 3: Sulit (Soal Drag & Drop / Isi Rumpang)
-        "                                                                                                                       ",
-        "                                                                                                                       ",
-        "                                                                                                                       ",
-        "                                                                                                                Q      ",
-        "                                          M            Q                                                      BBB      ",
-        "                      Q             BBBBBBBBBBB      BBBBB                                        S          B         ",
-        "                   BBBBB?BB                          B   B                     M                            B          ",
-        "         E                                           B Q B    E     E     BBBBBBBB             BB?BB       B           ",
-        "       NBBBB                    E                    BBBBB   BBBB  BBBB                        B          B            ",
-        "                            BBBBBBB                                                            B         B             ",
-        "   Q           B?B                        P                                              B?B   B        B              ",
-        "  BBB          BBB       E                p                E             X       E             B       B               ",
-        "GGGGGGG   GGGGGGGGGGGGGGGGGGGGGG   GGGGGGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG   GGGGGGGGGGGGGGGG                ",
-        "                                                                                                                       ",
-        "                                                                                                                       ",
-        "                                     U                                                                                 ",
-        "                                     u                                                                                 ",
-        "                                   BBBBBBB   BBBBBB                                                                    ",
-        "                                                 B       M                                                             ",
-        "                                       Q         B     BBBBB     Q                                                     ",
-        "                                   B             B               B          O                                          ",
-        "                                   B   E     E   B   E        E  B          O                                          ",
-        "                                   GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG                                          ",
-        "                                                                                                                       "
+        "                                                                                                                          ",
+        "                                                                                                              Q           ",
+        "                                          M               Q                                                               ",
+        "                      Q                                                                                                   ",
+        "                                                                                M                            BBB          ",
+        "                                   BBBBBBBBBBB          BBBBB                                                  B          ",
+        "                   BBBBB?BB                             B   B                                                   B         ",
+        "         E                                              B ? B    E     E     BBBBBBBB               BB?BB       B         ",
+        "       NBBBB                    E                       BBBBB   BBBB  BBBB                         B          B        S  ",
+        "                       N     BBBBBBB                             Q                                B         B             ",
+        "   Q           BBB                        P                              X                 B?B   B        B               ",
+        "               BBB       E                p                E             X       E              B       B                 ",
+        "GGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGG   GGGGGGGGGGGG    GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG  GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG ",
+        "                                                                                                                          ",
+        "                                                                                                                          ",
+        "                                     U                                                                                    ",
+        "                                     u                   M                                                                ",
+        "                                   BBBBBBB   BBBBBB                BBBBBB                                                 ",
+        "                                                 B                                                                        ",
+        "                                       Q         B     BBBBB     Q   ?????                                                ",
+        "                                   B             B                                                                        ",
+        "                                   B   E     E   B   E        E             O                                             ",
+        "                                   GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG                                             ",
+        "                                                                                                                          "
     ]
 ];
 
@@ -875,7 +929,21 @@ function drawGame() {
                         ctx.fillStyle = '#000'; ctx.fillRect(tx + TILE_SIZE - 10, ty + 4, 10, TILE_SIZE - 8);
                     }
                 } else if (tile.type === 20) { 
-                    ctx.fillStyle = '#555'; ctx.beginPath(); ctx.moveTo(tx+TILE_SIZE/2, ty); ctx.lineTo(tx+TILE_SIZE, ty+TILE_SIZE); ctx.lineTo(tx, ty+TILE_SIZE); ctx.fill();
+                    // Better Grass/Bush
+                    ctx.fillStyle = '#2E7D32'; // Dark green
+                    ctx.beginPath();
+                    ctx.arc(tx + TILE_SIZE/2, ty + TILE_SIZE, TILE_SIZE/2, Math.PI, 0); // Center bump
+                    ctx.arc(tx + TILE_SIZE*0.8, ty + TILE_SIZE, TILE_SIZE/3, Math.PI, 0); // Right bump
+                    ctx.arc(tx + TILE_SIZE*0.2, ty + TILE_SIZE, TILE_SIZE/3, Math.PI, 0); // Left bump
+                    ctx.fill();
+                    
+                    // Light green highlight
+                    ctx.fillStyle = '#4CAF50'; 
+                    ctx.beginPath();
+                    ctx.arc(tx + TILE_SIZE/2, ty + TILE_SIZE, TILE_SIZE/2.5, Math.PI, 0); 
+                    ctx.arc(tx + TILE_SIZE*0.8, ty + TILE_SIZE, TILE_SIZE/3.5, Math.PI, 0); 
+                    ctx.arc(tx + TILE_SIZE*0.2, ty + TILE_SIZE, TILE_SIZE/3.5, Math.PI, 0); 
+                    ctx.fill();
                 }
             }
         }
@@ -1102,22 +1170,44 @@ function showMessage(msg, btnText, callback) {
 
 /** DATABASE KUIS BERDASARKAN LEVEL */
 const quizLevel1 = [
-    { q: "Apa nama ibukota negara Indonesia?", a: ["Jakarta", "Bandung", "Surabaya", "Medan"], correct: 0 },
-    { q: "Berapa hasil dari 8 x 7?", a: ["45", "54", "56", "64"], correct: 2 },
-    { q: "Hewan apa yang bernapas dengan insang?", a: ["Kucing", "Ikan", "Burung", "Ular"], correct: 1 },
+    { q: "Rafi sedang bermain game online saat berpuasa. Temannya mengajak makan karena lapar, tetapi Rafi menolak. Sikap Rafi menunjukkan bahwa puasa mengajarkan …", a: ["Bermain game", "Menahan diri", "Menjadi kuat", "Beristirahat"], correct: 1 },
+    { q: "Dina lupa bahwa ia sedang berpuasa lalu tanpa sengaja minum air. Setelah ingat, ia segera berhenti. Puasa Dina …", a: ["Batal dan harus diganti", "Tetap sah karena tidak sengaja", "Tidak sah sejak pagi", "Harus membayar denda"], correct: 1 },
+    { q: "Budi sudah berusia 14 tahun dan sehat, tetapi ia sengaja tidak berpuasa tanpa alasan. Sikap yang seharusnya dilakukan Budi adalah …", a: ["Tetap tidak berpuasa", "Berpuasa karena sudah wajib", "Mengganti dengan sedekah saja", "Mengabaikan kewajiban"], correct: 1 },
+    { q: "Saat bulan Ramadhan, banyak orang membagikan makanan gratis kepada yang membutuhkan. Kegiatan tersebut menunjukkan hikmah puasa yaitu …", a: ["Menghemat uang", "Melatih empati kepada orang lain", "Mengurangi kegiatan", "Menghindari pekerjaan"], correct: 1 },
+    { q: "Andi sengaja makan siang di sekolah saat bulan Ramadhan padahal ia tidak sedang sakit. Perbuatan Andi termasuk …", a: ["Perbuatan yang membatalkan puasa", "Perbuatan sunnah", "Perbuatan yang dianjurkan", "Perbuatan makruh saja"], correct: 0 },
+    { q: "Seseorang mengunggah video dirinya sedang makan dengan sengaja saat siang Ramadhan untuk bercanda di media sosial. Sikap tersebut sebaiknya …", a: ["Ditiru", "Dianggap biasa", "Dihindari karena tidak menghormati orang berpuasa", "Dijadikan hiburan"], correct: 2 },
+    { q: "Seorang siswa tetap belajar dengan semangat walaupun sedang berpuasa. Hal ini menunjukkan bahwa puasa …", a: ["Menghambat kegiatan", "Mengajarkan disiplin dan tanggung jawab", "Membuat malas belajar", "Mengurangi aktivitas"], correct: 1 },
+    { q: "Siti sedang sakit dan dokter menyarankan tidak berpuasa dulu. Dalam Islam, Siti boleh …", a: ["Tetap berpuasa", "Tidak berpuasa dan mengganti di hari lain", "Tidak berpuasa selamanya", "Tidak beribadah"], correct: 1 },
+    { q: "Puasa yang dilakukan umat Islam setiap bulan Ramadhan merupakan contoh puasa …", a: ["Sunnah", "Wajib", "Makruh", "Mubah"], correct: 1 },
+    { q: "Ketika berpuasa, seseorang berusaha menjaga ucapan agar tidak berkata kasar di media sosial. Hal ini menunjukkan bahwa puasa juga melatih …", a: ["Kekuatan fisik", "Pengendalian diri", "Kecepatan berpikir", "Kemampuan berbicara"], correct: 1 }
 ];
 
 const quizLevel2 = [
-    { words: ["Saya", "suka", "belajar", "matematika"], correct: "Saya suka belajar matematika" },
-    { words: ["Bumi", "mengelilingi", "matahari"], correct: "Bumi mengelilingi matahari" },
-    { words: ["Rajin", "pangkal", "pandai"], correct: "Rajin pangkal pandai" },
+    { words: ["menahan", "Puasa", "diri", "adalah", "makan", "dari", "minum"], correct: "Puasa adalah menahan diri dari makan minum" },
+    { words: ["Ramadhan", "Puasa", "bulan", "dilakukan", "pada"], correct: "Puasa dilakukan pada bulan Ramadhan" },
+    { words: ["Islam", "bagi", "Puasa", "wajib", "umat", "Ramadhan"], correct: "Puasa Ramadhan wajib bagi umat Islam" },
+    { words: ["sah", "puasa", "Niat", "adalah", "salah", "rukun", "satu"], correct: "Niat adalah salah satu rukun sah puasa" },
+    { words: ["puasa", "Makan", "sengaja", "membatalkan", "dengan"], correct: "Makan dengan sengaja membatalkan puasa" },
+    { words: ["subuh", "sebelum", "dilakukan", "Niat", "puasa"], correct: "Niat puasa dilakukan sebelum subuh" },
+    { words: ["Puasa", "melatih", "kesabaran", "kita"], correct: "Puasa melatih kesabaran kita" },
+    { words: ["baligh", "orang", "wajib", "Puasa", "bagi", "yang"], correct: "Puasa wajib bagi orang yang baligh" },
+    { words: ["sunnah", "Puasa", "Senin", "Kamis", "dilakukan"], correct: "Puasa sunnah dilakukan Senin Kamis" },
+    { words: ["lapar", "merasakan", "Orang", "puasa", "bersabar", "agar"], correct: "Orang puasa merasakan lapar agar bersabar" }
 ];
 
 const quizLevel3 = [
-    { text: "Indonesia terletak di benua ", answer: "Asia", options: ["Eropa", "Asia", "Afrika", "Amerika"] },
-    { text: "Simbol sila ke-3 Pancasila adalah ", answer: "Pohon Beringin", options: ["Bintang", "Rantai", "Pohon Beringin", "Padi"] },
-    { text: "Benda yang dapat ditarik magnet disebut benda ", answer: "Magnetis", options: ["Isolator", "Magnetis", "Cair", "Gas"] },
+    { text: "Saat berpuasa, seseorang harus _____ dari makan, minum, dan perbuatan buruk meskipun sedang menggunakan media sosial.", answer: "Menahan diri" },
+    { text: "Agar puasa sah, seseorang harus membaca _____ sebelum waktu fajar.", answer: "Niat" },
+    { text: "Seorang anak mulai diwajibkan berpuasa ketika sudah mencapai usia _____.", answer: "Baligh" },
+    { text: "Puasa dimulai sejak masuk waktu _____.", answer: "Subuh" },
+    { text: "Puasa berakhir ketika masuk waktu _____.", answer: "Maghrib" },
+    { text: "Puasa yang dilakukan oleh seluruh umat Islam setiap bulan Ramadhan disebut _____.", answer: "Puasa Ramadhan" },
+    { text: "Puasa sunnah yang sering dilakukan untuk melatih disiplin ibadah adalah _____.", answer: "Puasa Senin Kamis" },
+    { text: "Jika seseorang dengan sadar makan siang saat berpuasa, maka itu termasuk _____ yang membatalkan puasa.", answer: "Makan sengaja" },
+    { text: "Menggosok gigi secara berlebihan pada siang hari hingga dikhawatirkan tertelan termasuk perbuatan _____ saat berpuasa.", answer: "Makruh" },
+    { text: "Dengan berpuasa, seseorang dapat lebih memahami kesulitan orang miskin sehingga tumbuh rasa _____.", answer: "Kesabaran" }
 ];
+const wordBankLvl3 = ["Baligh", "Niat", "Makan sengaja", "Menahan diri", "Puasa Ramadhan", "Puasa Senin Kamis", "Makruh", "Kesabaran", "Subuh", "Maghrib"];
 
 let activeQuizTargetR = 0, activeQuizTargetC = 0;
 
@@ -1176,10 +1266,10 @@ function triggerQuiz(r, c) {
     else if (currentLevel === 3) {
         document.getElementById('quiz-title').innerText = "Lengkapi Kalimat!";
         const qData = quizLevel3[Math.floor(Math.random() * quizLevel3.length)];
-        document.getElementById('quiz-question').innerHTML = qData.text + " <span class='answer-slot' id='q3-slot'>...</span>";
+        document.getElementById('quiz-question').innerHTML = qData.text.replace("_____", "<span class='answer-slot' id='q3-slot'>...</span>");
         
         let wordBank = document.createElement('div'); wordBank.className = 'word-bank';
-        let shuffled = [...qData.options].sort(() => Math.random() - 0.5);
+        let shuffled = [...wordBankLvl3].sort(() => Math.random() - 0.5);
         let selectedAns = "";
 
         shuffled.forEach(w => {
@@ -1215,9 +1305,13 @@ function validateQuiz(isCorrect) {
 
 /** LIBRARY SYSTEM */
 const libPages = [
-    "Selamat datang di Ruang Baca! Membaca adalah jendela dunia.",
-    "Bermain game memang seru, tapi jangan lupa kewajiban belajar ya.",
-    "Tetap semangat dan jadilah pahlawan di dunia nyata dengan ilmu yang bermanfaat!"
+    "<b>1. Pengertian Puasa</b><br>Puasa adalah menahan diri dari segala sesuatu yang membatalkan puasa seperti makan, minum, dan hal-hal lain yang membatalkan, mulai dari terbit fajar hingga terbenam matahari, dengan niat karena Allah SWT.<br><br>Secara bahasa, puasa berasal dari kata 'shaum' yang berarti menahan diri.<br><br>Secara istilah syariat, puasa berarti menahan diri dari makan, minum, dan segala yang membatalkan dengan niat pada waktu tertentu.<br><br><b>2. Dasar Hukum Puasa</b><br>Dasar hukum puasa terdapat dalam Al-Qur'an dan Hadis.<br><b>a. Al-Qur'an</b><br>Allah SWT berfirman dalam QS. Al-Baqarah ayat 183 yang menunjukkan bahwa puasa hukumnya wajib bagi setiap muslim yang memenuhi syarat.<br><b>b. Hadis</b><br>Rasulullah SAW bersabda tentang rukun Islam, salah satunya berpuasa di bulan Ramadan (HR. Bukhari dan Muslim).",
+    
+    "<b>3. Syarat Wajib Puasa</b><br>Syarat yang menyebabkan seseorang wajib menjalankan puasa:<br><ul><li>Beragama Islam</li><li>Baligh (dewasa)</li><li>Berakal sehat</li><li>Mampu menjalankan puasa</li><li>Tidak dalam keadaan haid atau nifas bagi perempuan</li></ul><br><b>4. Syarat Sah Puasa</b><br>Syarat agar puasa dianggap sah menurut syariat:<br><ul><li>Beragama Islam</li><li>Berakal sehat</li><li>Mumayyiz (dapat membedakan baik dan buruk)</li><li>Suci dari haid dan nifas</li><li>Dilaksanakan pada waktu yang diperbolehkan untuk berpuasa</li></ul>",
+    
+    "<b>5. Rukun Puasa</b><br>Hal yang harus dilakukan dalam puasa:<br><ul><li><b>Niat:</b> Dilakukan pada malam hari sebelum fajar untuk puasa wajib.</li><li><b>Menahan diri:</b> Dari segala yang membatalkan puasa dari terbit fajar hingga terbenam matahari.</li></ul><br><b>6. Hal-hal yang Membatalkan Puasa</b><br><ol><li>Makan dan minum dengan sengaja</li><li>Muntah dengan sengaja</li><li>Berhubungan suami istri di siang hari</li><li>Keluar mani dengan sengaja</li><li>Haid atau nifas</li><li>Gila atau hilang akal</li><li>Murtad (keluar dari Islam)</li></ol>",
+    
+    "<b>7. Hal-hal yang Makruh Saat Puasa</b><br>Perbuatan yang sebaiknya dihindari saat berpuasa:<br><ul><li>Berkumur secara berlebihan</li><li>Menggosok gigi setelah waktu dzuhur</li><li>Mencicipi makanan tanpa kebutuhan</li><li>Berbicara kotor atau berbohong</li><li>Bermalas-malasan</li></ul><br><b>8. Jenis-jenis Puasa</b><br><b>A. Puasa Wajib:</b> Ramadan, Qadha, Nazar, Kafarat.<br><b>B. Puasa Sunnah:</b> Senin dan Kamis, Arafah (9 Dzulhijjah), Asyura (10 Muharram), Tasu’a (9 Muharram), 6 hari bulan Syawal, Puasa Daud."
 ];
 let currentLibPage = 0;
 
@@ -1228,7 +1322,7 @@ function showLibrary() {
 }
 
 function updateLibraryUI() {
-    document.getElementById('lib-content-area').innerText = libPages[currentLibPage];
+    document.getElementById('lib-content-area').innerHTML = libPages[currentLibPage];
     document.getElementById('lib-page-indicator').innerText = `${currentLibPage + 1} / ${libPages.length}`;
     document.getElementById('lib-prev').style.display = currentLibPage > 0 ? 'inline-block' : 'none';
     document.getElementById('lib-next').style.display = currentLibPage < libPages.length - 1 ? 'inline-block' : 'none';
@@ -1288,9 +1382,9 @@ function showLeaderboard() {
                 data.sort((a,b) => b.score - a.score);
                 
                 podiumContainer.classList.remove('hidden');
-                if(data[0]) { document.getElementById('pod-1-name').innerText = data[0].name || '-'; document.getElementById('pod-1-score').innerText = data[0].score || '-'; }
-                if(data[1]) { document.getElementById('pod-2-name').innerText = data[1].name || '-'; document.getElementById('pod-2-score').innerText = data[1].score || '-'; }
-                if(data[2]) { document.getElementById('pod-3-name').innerText = data[2].name || '-'; document.getElementById('pod-3-score').innerText = data[2].score || '-'; }
+                if(data[0]) { document.getElementById('pod-1-name').innerText = data[0].name || '-'; document.getElementById('pod-1-school').innerText = data[0].school || '-'; document.getElementById('pod-1-score').innerText = data[0].score || '-'; }
+                if(data[1]) { document.getElementById('pod-2-name').innerText = data[1].name || '-'; document.getElementById('pod-2-school').innerText = data[1].school || '-'; document.getElementById('pod-2-score').innerText = data[1].score || '-'; }
+                if(data[2]) { document.getElementById('pod-3-name').innerText = data[2].name || '-'; document.getElementById('pod-3-school').innerText = data[2].school || '-'; document.getElementById('pod-3-score').innerText = data[2].score || '-'; }
                 
                 let html = "";
                 for(let i=3; i<data.length; i++) {
