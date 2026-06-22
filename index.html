@@ -3,133 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Petualangan Mariolpg</title>
+    <title>Petualangan Mariolpg - AI Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Inter:wght@400;700&display=swap');
 
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #000; overflow: hidden; font-family: 'Fredoka One', cursive, sans-serif; }
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background-color: #0d0e15; overflow: hidden; 
+            font-family: 'Fredoka One', cursive, sans-serif; 
+        }
 
         /* --- NOTIFIKASI LANDSCAPE --- */
         #landscape-warning {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #e52521; color: #fff; z-index: 10000;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); color: #fff; z-index: 10000;
             display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; box-sizing: border-box;
         }
         .rotate-icon { font-size: 80px; margin-bottom: 20px; animation: rotatePhone 2s infinite ease-in-out; }
         @keyframes rotatePhone { 0% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
         
-        @media screen and (orientation: portrait) { 
-            #landscape-warning { display: flex !important; } 
-            #game-wrapper { display: none !important; } 
+        @media screen and (orientation: portrait) and (max-width: 900px) { 
+            body.check-orientation #landscape-warning { display: flex !important; } 
+            body.check-orientation #game-wrapper { display: none !important; } 
         }
 
+        /* --- SPLASH SCREEN --- */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(30, 27, 75, 0.25), rgba(3, 7, 18, 0.35)), url('https://imgur.com/XmJxuA5.png');
+            background-size: cover;
+            background-position: center;
+            z-index: 12000; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease-out;
+        }
+        .splash-logo { width: 250px; max-width: 80%; margin-bottom: 20px; animation: bounceIn 1.5s ease-out, floatSplash 3s ease-in-out infinite 1.5s; filter: drop-shadow(0px 10px 15px rgba(99, 102, 241, 0.4)); }
+        .splash-text { font-family: 'Fredoka One', cursive; font-size: 22px; color: #fff; text-shadow: 0 0 10px rgba(99, 102, 241, 0.8); margin-bottom: 30px; text-align: center; padding: 0 20px; }
+        .loading-wrapper { width: 60%; max-width: 300px; text-align: center; }
+        .loading-track { width: 100%; height: 20px; background: rgba(0,0,0,0.6); border: 3px solid #6366f1; border-radius: 20px; overflow: hidden; }
+        .loading-fill { height: 100%; width: 0%; background: repeating-linear-gradient(45deg, #6366f1, #6366f1 10px, #4f46e5 10px, #4f46e5 20px); transition: width 0.2s ease-out; }
+        .loading-text { color: #a5b4fc; font-size: 14px; margin-top: 10px; font-weight: bold; font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 2px; }
+        
+        @keyframes bounceIn { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); } }
+        @keyframes floatSplash { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        /* --- MAIN APPLICATION WRAPPERS --- */
         #game-wrapper { width: 100vw; height: 100vh; position: relative;}
-        #game-container { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background-color: #5c94fc; overflow: hidden; }
+        #game-container { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background-color: #0b0f19; overflow: hidden; }
         canvas { display: block; width: 100%; height: 100%; object-fit: cover; }
 
         /* --- UI OVERLAYS --- */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(92, 148, 252, 0.95); z-index: 100; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(11, 15, 25, 0.5); z-index: 100; }
         .hidden { display: none !important; }
 
-        #login-menu, #main-menu { background-image: url('https://imgur.com/9JiaKHG.png'); background-repeat: no-repeat; background-position: center center; background-size: cover; background-color: #5c94fc; }
-        .login-box { background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 20px; text-align: center; width: 80%; max-width: 400px; border: 5px solid #fbd000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
-        .login-box h2 { color: #e52521; margin-top: 0; font-size: 28px; }
+        #login-menu, #main-menu { 
+            background-image: linear-gradient(rgba(15, 23, 42, 0.25), rgba(2, 6, 23, 0.35)), url('https://imgur.com/XmJxuA5.png'); 
+            background-size: cover; 
+            background-position: center;
+        }
+        
+        /* --- KOTAK LOGIN --- */
+        .login-box { 
+            background: rgba(15, 23, 42, 0.95); 
+            padding: 30px; 
+            border-radius: 20px; 
+            text-align: center; 
+            width: 80%; 
+            max-width: 400px; 
+            border: 5px solid #6366f1; 
+            box-shadow: 0 0 30px rgba(99,102,241,0.45); 
+            backdrop-filter: blur(8px); 
+            margin-top: 120px;
+        }
+        .login-box h2 { color: #818cf8; margin-top: 0; font-size: 28px; }
         .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group label { display: block; font-size: 14px; color: #333; margin-bottom: 5px; font-family: sans-serif; font-weight: bold;}
-        .input-field { width: 100%; padding: 12px; border: 3px solid #ccc; border-radius: 10px; font-size: 16px; font-family: sans-serif; box-sizing: border-box; outline: none; }
-        .input-field:focus { border-color: #4caf50; }
-        #login-error { color: #e52521; font-family: sans-serif; font-size: 14px; margin-bottom: 15px; display: none; font-weight: bold;}
+        .input-group label { display: block; font-size: 14px; color: #c7d2fe; margin-bottom: 5px; font-family: 'Inter', sans-serif; font-weight: bold;}
+        .input-field { width: 100%; padding: 12px; background: #1e293b; border: 3px solid #3b82f6; border-radius: 10px; font-size: 16px; font-family: 'Inter', sans-serif; color: #fff; box-sizing: border-box; outline: none; }
+        .input-field:focus { border-color: #6366f1; }
+        #login-error { color: #f87171; font-family: 'Inter', sans-serif; font-size: 14px; margin-bottom: 15px; display: none; font-weight: bold;}
 
-        /* Penyesuaian gambar agar tidak menutupi layar saat landscape di HP */
-        #title-img { max-width: 80%; max-height: 35vh; object-fit: contain; margin-top: 2vh; margin-bottom: 0px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); animation: float 3s ease-in-out infinite; position: relative; z-index: 1; }
+        #title-img { max-width: 80%; max-height: 35vh; object-fit: contain; margin-top: 2vh; margin-bottom: 0px; filter: drop-shadow(0px 0px 25px rgba(99, 102, 241, 0.6)); animation: float 3s ease-in-out infinite; position: relative; z-index: 1; }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
-        .small-title { font-size: 28px; color: #FFFF00; text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 0 15px rgba(255, 255, 255, 1); margin-top: 5px; margin-bottom: 15px; letter-spacing: 2px; text-align: center; position: relative; z-index: 2; }
+        .small-title { font-size: 28px; color: #a5b4fc; text-shadow: 0 0 15px rgba(99, 102, 241, 0.8); margin-top: 5px; margin-bottom: 15px; letter-spacing: 2px; text-align: center; position: relative; z-index: 2; }
         .menu-buttons { display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 2; }
-        .btn { background: #e52521; color: white; border: 4px solid #fff; padding: 12px 30px; font-size: 18px; font-family: 'Fredoka One', cursive; border-radius: 30px; cursor: pointer; box-shadow: 0 5px 0 #8a0000; transition: transform 0.1s; width: 100%; box-sizing: border-box; text-align: center; text-transform: uppercase; }
-        .btn:active { transform: translateY(5px); box-shadow: 0 0 0 #8a0000; }
-        .btn-blue { background: #2196F3; box-shadow: 0 5px 0 #0b7dda; }
+        
+        .btn { background: #4f46e5; color: white; border: 4px solid #818cf8; padding: 12px 30px; font-size: 18px; font-family: 'Fredoka One', cursive; border-radius: 30px; cursor: pointer; box-shadow: 0 5px 0 #312e81; transition: transform 0.1s; width: 100%; box-sizing: border-box; text-align: center; text-transform: uppercase; }
+        .btn:active { transform: translateY(5px); box-shadow: 0 0 0 #312e81; }
+        .btn-blue { background: #0284c7; border-color: #38bdf8; box-shadow: 0 5px 0 #0369a1; }
 
-        /* HUD */
+        /* --- HUD --- */
         #hud { position: fixed; top: 15px; left: 15px; right: 15px; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none; z-index: 1050; }
-        .stats { background: rgba(0, 0, 0, 0.6); color: white; padding: 10px 20px; border-radius: 15px; font-size: 20px; border: 2px solid #fff; pointer-events: auto; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
+        .stats { background: rgba(15, 23, 42, 0.85); color: white; padding: 10px 20px; border-radius: 15px; font-size: 20px; border: 2px solid #6366f1; pointer-events: auto; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; box-shadow: 0 0 15px rgba(99,102,241,0.2); }
         .top-buttons { display: flex; gap: 10px; pointer-events: auto; flex-wrap: wrap; justify-content: flex-end;}
-        .hud-btn { background: #fbd000; color: #d13a00; border: 3px solid #fff; padding: 10px; font-size: 16px; font-family: inherit; border-radius: 15px; cursor: pointer; box-shadow: 0 4px 0 #c28700; white-space: nowrap;}
-        .hud-btn.active-bgm { background: #4caf50; color: white; border-color: white; box-shadow: 0 4px 0 #2e7d32; }
+        .hud-btn { background: #1e1b4b; color: #a5b4fc; border: 3px solid #6366f1; padding: 10px; font-size: 16px; font-family: inherit; border-radius: 15px; cursor: pointer; box-shadow: 0 4px 0 #312e81; white-space: nowrap;}
+        .hud-btn.active-bgm { background: #059669; color: white; border-color: #34d399; box-shadow: 0 4px 0 #064e3b; }
 
-        /* TOUCH CONTROLS */
+        /* --- TOUCH CONTROLS --- */
         #touch-controls { position: fixed; bottom: 30px; left: 0; width: 100%; height: 120px; display: flex; justify-content: space-between; padding: 0 30px; box-sizing: border-box; pointer-events: none; z-index: 1050; }
         .touch-group { display: flex; gap: 15px; align-items: flex-end; pointer-events: auto; }
-        .t-btn { width: 70px; height: 70px; background: rgba(255, 255, 255, 0.4); border: 4px solid rgba(255, 255, 255, 0.8); border-radius: 50%; color: #333; font-size: 14px; font-weight: bold; display: flex; justify-content: center; align-items: center; user-select: none; cursor: pointer; }
-        .t-btn:active, .t-btn.active { background: rgba(255, 255, 255, 0.9); transform: scale(0.95); }
-        .t-btn-jump { width: 85px; height: 85px; background: rgba(229, 37, 33, 0.6); color: white; border-color: rgba(255,255,255,0.9); }
+        .t-btn { width: 70px; height: 70px; background: rgba(30, 41, 59, 0.7); border: 4px solid rgba(99, 102, 241, 0.8); border-radius: 50%; color: #fff; font-size: 14px; font-weight: bold; display: flex; justify-content: center; align-items: center; user-select: none; cursor: pointer; }
+        .t-btn:active, .t-btn.active { background: rgba(99, 102, 241, 0.9); transform: scale(0.95); }
+        .t-btn-jump { width: 85px; height: 85px; background: rgba(79, 70, 229, 0.8); color: white; border-color: rgba(165, 180, 252, 0.9); }
 
-        /* MODALS */
-        #quiz-modal, #library-modal { background: rgba(0, 0, 0, 0.85); z-index: 1200; }
-        .quiz-box, .library-box { background: #fff; padding: 25px; border-radius: 20px; text-align: center; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; border: 5px solid #fbd000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: sans-serif; }
-        .library-box { border-color: #4caf50; }
-        .quiz-box h2, .library-box h2 { color: #e52521; margin-top: 0; font-size: 24px; font-family: 'Fredoka One', cursive;}
+        /* --- MODALS --- */
+        #quiz-modal, #library-modal { background: rgba(3, 7, 18, 0.9); z-index: 1200; }
+        .quiz-box, .library-box { background: #1e293b; color: #fff; padding: 25px; border-radius: 20px; text-align: center; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; border: 5px solid #6366f1; box-shadow: 0 0 30px rgba(99,102,241,0.4); font-family: 'Inter', sans-serif; }
+        .library-box { border-color: #10b981; box-shadow: 0 0 30px rgba(16,185,129,0.3); }
+        .quiz-box h2, .library-box h2 { color: #818cf8; margin-top: 0; font-size: 24px; font-family: 'Fredoka One', cursive;}
+        .library-box h2 { color: #34d399; }
         
-        /* Quiz Kustom UI */
-        .q-btn { background: #4caf50; color: white; border: none; padding: 12px; font-size: 16px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; transition: transform 0.1s, background 0.2s;}
+        .ui-scale-wrapper { transition: transform 0.2s ease-in-out; transform-origin: center center; }
+
+        /* Quiz UI Elements */
+        .q-btn { background: #10b981; color: white; border: none; padding: 12px; font-size: 16px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; transition: transform 0.1s, background 0.2s;}
         .q-btn:active { transform: scale(0.95); }
-        .answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        
-        .word-bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 15px; padding: 15px; background: #f0f0f0; border-radius: 10px;}
-        .word-chip { background: #2196F3; color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; user-select: none; box-shadow: 0 3px 0 #0b7dda; display: inline-block; transition: transform 0.1s; font-size: 15px;}
-        .word-chip:active { transform: translateY(3px); box-shadow: 0 0 0; }
-        .word-chip.used { opacity: 0.3; pointer-events: none; }
-        
-        .answer-area { min-height: 60px; border: 3px dashed #ccc; border-radius: 10px; padding: 15px; margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; background: #fafafa;}
-        .answer-slot { display: inline-block; min-width: 60px; height: 35px; border-bottom: 3px solid #333; margin: 0 5px; text-align: center; color: #e52521; font-weight: bold; cursor: pointer; line-height: 35px; padding: 0 10px;}
-        .answer-slot.filled { border-bottom: 3px solid #4caf50; color: #4caf50; }
 
-        /* --- PAPAN SKOR & PODIUM --- */
-        .box-ui { background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 20px; border: 5px solid #fbd000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 90%; max-width: 550px; font-family: sans-serif; max-height: 90vh; overflow-y: auto;}
-        .box-ui h2 { color: #e52521; margin-top: 0; font-family: 'Fredoka One', cursive; font-size: 28px; text-transform: uppercase; text-shadow: 1px 1px 0px #fff;}
+        /* --- LEADERBOARD & PODIUM --- */
+        .box-ui { background: rgba(15, 23, 42, 0.95); padding: 25px; border-radius: 20px; border: 5px solid #6366f1; box-shadow: 0 0 30px rgba(99,102,241,0.3); text-align: center; width: 90%; max-width: 550px; font-family: 'Inter', sans-serif; max-height: 90vh; overflow-y: auto;}
+        .box-ui h2 { color: #818cf8; margin-top: 0; font-family: 'Fredoka One', cursive; font-size: 28px; text-transform: uppercase; }
         
-        #leaderboard-modal { background: url('https://imgur.com/giQNSsR.png') center center / cover no-repeat; }
-        .leaderboard-box { background: rgba(0, 0, 0, 0.8); border-color: #fbd000; }
-        .leaderboard-box h2 { color: #fff; text-shadow: 2px 2px 0px #000, -2px -2px 0px #000, 2px -2px 0px #000, -2px 2px 0px #000; }
-        .leaderboard-box #lb-loading { color: #fff; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+        #leaderboard-modal { 
+            background: linear-gradient(rgba(15, 23, 42, 0.25), rgba(2, 6, 23, 0.35)), url('https://imgur.com/XmJxuA5.png'); 
+            background-size: cover;
+            background-position: center;
+        }
+        .leaderboard-box { background: rgba(15, 23, 42, 0.9); border-color: #6366f1; }
+        .leaderboard-box h2 { color: #fff; text-shadow: 0 0 10px rgba(99,102,241,0.5); }
 
         .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 8px; margin: 40px 0 20px 0; height: 160px; }
         .podium { position: relative; color: white; border-radius: 15px 15px 0 0; width: 30%; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 25px; font-weight: bold; font-family: 'Fredoka One', cursive; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); box-shadow: 0 -5px 15px rgba(0,0,0,0.2), inset 0 -5px 0 rgba(0,0,0,0.2); transition: transform 0.3s ease;}
         .podium:hover { transform: translateY(-5px); }
-        .podium .pod-rank { position: absolute; top: -20px; background: white; color: #333; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); border: 3px solid #fff; text-shadow: none; }
-        .podium.p1 .pod-rank { width: 55px; height: 55px; top: -27px; font-size: 24px; border-color: #FFD700; }
+        .podium .pod-rank { position: absolute; top: -20px; background: #1e293b; color: #fff; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); border: 3px solid #6366f1; text-shadow: none; }
+        .podium.p1 .pod-rank { width: 55px; height: 55px; top: -27px; font-size: 24px; border-color: #fbbf24; color: #fbbf24; }
         .podium .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 95%; font-size: 15px; margin-top: 8px; }
-        .podium .school { font-size: 10px; font-family: sans-serif; font-weight: normal; background: rgba(0,0,0,0.3); padding: 2px 5px; border-radius: 10px; margin: 3px 0; max-width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: none; }
-        .podium .score { font-size: 20px; margin-top: auto; padding-bottom: 8px; color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,0.4); }
+        .podium .school { font-size: 10px; font-family: 'Inter', sans-serif; font-weight: normal; background: rgba(0,0,0,0.3); padding: 2px 5px; border-radius: 10px; margin: 3px 0; max-width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: none; }
+        .podium .score { font-size: 20px; margin-top: auto; padding-bottom: 8px; color: #fff; }
         
-        .p1 { height: 140px; background: linear-gradient(to bottom, #FFD700, #DAA520); border: 2px solid #B8860B; z-index: 3;} 
-        .p2 { height: 110px; background: linear-gradient(to bottom, #E0E0E0, #A9A9A9); border: 2px solid #808080; z-index: 2;} 
-        .p3 { height: 85px; background: linear-gradient(to bottom, #CD7F32, #8B4513); border: 2px solid #5C2E0B; z-index: 1;} 
+        .p1 { height: 140px; background: linear-gradient(to bottom, #fbbf24, #d97706); border: 2px solid #b45309; z-index: 3;} 
+        .p2 { height: 110px; background: linear-gradient(to bottom, #94a3b8, #475569); border: 2px solid #334155; z-index: 2;} 
+        .p3 { height: 85px; background: linear-gradient(to bottom, #ca8a04, #854d0e); border: 2px solid #713f12; z-index: 1;} 
         
-        .lb-list { background: rgba(0,0,0,0.05); border-radius: 15px; padding: 10px; text-align: left; margin-bottom: 15px; max-height: 180px; overflow-y: auto; border: 2px solid rgba(0,0,0,0.1); }
-        
-        .leaderboard-box .lb-list { background: rgba(0,0,0,0.75); border-color: rgba(255,255,255,0.4); }
-        .leaderboard-box .lb-item { border-bottom-color: rgba(255,255,255,0.2); }
+        .lb-list { background: rgba(0,0,0,0.2); border-radius: 15px; padding: 10px; text-align: left; margin-bottom: 15px; max-height: 180px; overflow-y: auto; border: 2px solid rgba(255,255,255,0.05); }
+        .leaderboard-box .lb-list { background: rgba(15, 23, 42, 0.85); border-color: rgba(99,102,241,0.2); }
+        .leaderboard-box .lb-item { border-bottom-color: rgba(255,255,255,0.05); }
         .leaderboard-box .lb-name { color: #fff; }
-        .leaderboard-box .lb-school { color: #ddd; }
-        .leaderboard-box .lb-pts { text-shadow: 1px 1px 1px #000; }
-        .leaderboard-box .lb-rank { color: #fbd000; text-shadow: 1px 1px 1px #000; }
+        .leaderboard-box .lb-school { color: #94a3b8; }
+        .leaderboard-box .lb-pts { color: #34d399; }
+        .leaderboard-box .lb-rank { color: #fbd000; }
 
-        .lb-item { display: flex; justify-content: space-between; padding: 10px 8px; border-bottom: 1px solid rgba(0,0,0,0.1); align-items: center; }
-        .lb-rank { font-weight: bold; color: #e52521; width: 35px; font-size: 18px; font-family: 'Fredoka One', cursive;}
-        .lb-name { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; color: #333; font-weight: bold; line-height: 1.2;}
-        .lb-school { font-size: 11px; color: #777; display: block; font-weight: normal;}
-        .lb-pts { font-weight: bold; color: #4caf50; font-size: 18px; font-family: 'Fredoka One', cursive;}
-        #lb-loading { text-align: center; font-style: italic; color: #666; padding: 20px 0;}
+        .lb-item { display: flex; justify-content: space-between; padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center; }
+        .lb-rank { font-weight: bold; color: #818cf8; width: 35px; font-size: 18px; font-family: 'Fredoka One', cursive;}
+        .lb-name { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; color: #e2e8f0; font-weight: bold; line-height: 1.2;}
+        .lb-school { font-size: 11px; color: #94a3b8; display: block; font-weight: normal;}
+        .lb-pts { font-weight: bold; color: #10b981; font-size: 18px; font-family: 'Fredoka One', cursive;}
+        #lb-loading { text-align: center; font-style: italic; color: #94a3b8; padding: 20px; }
 
-        /* Efek UI Victory & Game Over Baru */
-        .victory-box { border-color: #4CAF50; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: linear-gradient(to bottom, #fff, #e8f5e9); }
-        .victory-img { max-width: 100%; height: 180px; object-fit: contain; margin-bottom: -10px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3)); animation: float 3s ease-in-out infinite; }
-        .victory-title { font-size: 36px !important; color: #4CAF50 !important; text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.1); margin-bottom: 10px;}
-        .score-display { background: #fbd000; border: 4px solid #fff; border-radius: 15px; padding: 15px; box-shadow: 0 5px 0 #c28700; color: #d13a00; }
-        .score-display span { font-weight: bold; font-size: 16px; display: block; }
-        .score-display h3 { margin: 0; font-size: 40px; font-family: 'Fredoka One', cursive; text-shadow: 2px 2px 0px #fff; }
+        /* Victory & Game Over Screens */
+        .victory-box { border-color: #10b981; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: linear-gradient(to bottom, #0f172a, #064e3b); }
+        .victory-img { max-width: 100%; height: 180px; object-fit: contain; margin: 0 auto -10px auto; display: block; filter: drop-shadow(0 10px 15px rgba(16,185,129,0.3)); animation: float 3s ease-in-out infinite; }
+        .victory-title { font-size: 36px !important; color: #34d399 !important; text-shadow: 0 0 10px rgba(16,185,129,0.5); margin-bottom: 10px;}
+        .score-display { background: #1e1b4b; border: 4px solid #6366f1; border-radius: 15px; padding: 15px; box-shadow: 0 5px 0 #312e81; color: #fff; }
+        .score-display span { font-weight: bold; font-size: 16px; display: block; color: #a5b4fc; }
+        .score-display h3 { margin: 0; font-size: 40px; font-family: 'Fredoka One', cursive; text-shadow: 0 0 10px rgba(99,102,241,0.5); }
 
-        .message-box { border-color: #e52521; background: linear-gradient(to bottom, #fff, #ffebee); animation: shake 0.5s ease-in-out; }
-        .message-title { font-family: 'Fredoka One', cursive; font-size: 32px; color: #e52521; text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.1); margin-top: 10px;}
+        .message-box { border-color: #ef4444; background: linear-gradient(to bottom, #0f172a, #450a0a); animation: shake 0.5s ease-in-out; }
+        .message-title { font-family: 'Fredoka One', cursive; font-size: 32px; color: #f87171; text-shadow: 0 0 10px rgba(239,68,68,0.5); margin-top: 10px;}
 
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 50% { transform: translateX(10px); } 75% { transform: translateX(-10px); } }
@@ -138,7 +176,7 @@
             #touch-controls { bottom: 5px; padding: 0 15px; height: 90px; }
             .t-btn { width: 55px; height: 55px; font-size: 11px; border-width: 2px; }
             .t-btn-jump { width: 65px; height: 65px; font-size: 12px; }
-            .login-box { padding: 15px; }
+            .login-box { padding: 15px; margin-top: 40px; }
             .login-box h2 { font-size: 20px; }
             .input-field { padding: 8px; font-size: 14px; }
             .btn { font-size: 14px; padding: 8px 20px; }
@@ -159,12 +197,18 @@
             #touch-controls { bottom: 10px; padding: 0 10px; }
             .t-btn { width: 60px; height: 60px; font-size: 12px; }
             .t-btn-jump { width: 75px; height: 75px; font-size: 14px; }
-            .login-box { padding: 20px; }
+            .login-box { padding: 20px; margin-top: 60px; }
             .btn { font-size: 16px; padding: 12px 20px; }
             .stats { font-size: 16px; }
         }
 
-        #message-overlay { position: fixed; background: rgba(0,0,0,0.8); color: white; z-index: 1300;}
+        @media screen and (min-width: 1024px) {
+            #touch-controls { justify-content: space-between; padding: 0 60px; bottom: 40px; }
+            .t-btn { width: 80px; height: 80px; font-size: 16px; }
+            .t-btn-jump { width: 95px; height: 95px; font-size: 18px; }
+        }
+
+        #message-overlay { position: fixed; background: rgba(3,7,18,0.85); color: white; z-index: 1300;}
     </style>
 </head>
 <body>
@@ -180,31 +224,80 @@
         <canvas id="gameCanvas"></canvas>
     </div>
 
+    <!-- SPLASH SCREEN -->
+    <div id="splash-screen">
+        <img src="https://imgur.com/YRDVowX.png" alt="Logo Mariolpg" class="splash-logo">
+        <div class="splash-text">Selamat Datang di Game Interaktif Mariolpg</div>
+        <div class="loading-wrapper">
+            <div class="loading-track">
+                <div class="loading-fill" id="splash-loading-fill"></div>
+            </div>
+            <div class="loading-text" id="splash-loading-text">Memuat Dunia AI... 0%</div>
+        </div>
+    </div>
+
     <!-- UI Menus -->
-    <div id="login-menu" class="overlay">
-        <button id="fs-btn-login" class="hud-btn" style="position: absolute; top: 15px; right: 15px; z-index: 10;">⛶ Fullscreen</button>
-        <div class="login-box">
-            <h2>Masuk Dulu Yuk!</h2>
+    <div id="login-menu" class="overlay hidden">
+        <div style="position: absolute; top: 15px; right: 15px; z-index: 10; display: flex; gap: 10px;">
+            <button class="hud-btn zoom-out-global" title="Perkecil Layar">🔍-</button>
+            <button class="hud-btn zoom-in-global" title="Perbesar Layar">🔍+</button>
+            <button id="fs-btn-login" class="hud-btn">⛶ Fullscreen</button>
+        </div>
+        <div class="login-box ui-scale-wrapper">
+            <h2 class="font-bold">Masuk Dulu Yuk!</h2>
             <div id="login-error">Nama dan Sekolah harus diisi!</div>
-            <div class="input-group"><label>Nama Kamu:</label><input type="text" id="player-name" class="input-field" autocomplete="off" placeholder="Contoh: Noviya"></div>
-            <div class="input-group"><label>Asal Sekolah:</label><input type="text" id="player-school" class="input-field" autocomplete="off" placeholder="Contoh: SMPN 42 BDL"></div>
+            <div class="input-group">
+                <label>Nama Kamu:</label>
+                <input type="text" id="player-name" class="input-field" autocomplete="off" placeholder="Contoh: Noviya">
+            </div>
+            <div class="input-group">
+                <label>Asal Sekolah:</label>
+                <input type="text" id="player-school" class="input-field" autocomplete="off" placeholder="Contoh: SMPN 42 BDL">
+            </div>
             <button class="btn btn-blue" id="login-submit-btn">Mulai Petualangan</button>
         </div>
     </div>
 
     <div id="main-menu" class="overlay hidden">
-        <button id="fs-btn-main" class="hud-btn" style="position: absolute; top: 15px; right: 15px; z-index: 10;">⛶ Fullscreen</button>
-        <img id="title-img" src="https://imgur.com/VmSLsxs.png" alt="Petualangan Mariolpg">
-        <h1 class="small-title">Halo, <span id="welcome-name">Sobat</span>!</h1>
-        <div class="menu-buttons">
-            <button class="btn" id="start-btn">MAIN SEKARANG</button>
-            <button class="btn btn-blue" id="leaderboard-btn">🏆 PAPAN SKOR</button>
+        <div style="position: absolute; top: 15px; right: 15px; z-index: 10; display: flex; gap: 10px;">
+            <button class="hud-btn zoom-out-global" title="Perkecil Layar">🔍-</button>
+            <button class="hud-btn zoom-in-global" title="Perbesar Layar">🔍+</button>
+            <button id="fs-btn-main" class="hud-btn">⛶ Fullscreen</button>
+        </div>
+        <div class="ui-scale-wrapper" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <h1 class="small-title" style="margin-top: 180px;">Halo, <span id="welcome-name">Sobat AI</span>!</h1>
+            
+            <!-- Tata letak berdampingan untuk Tombol Menu dan Pemilihan Karakter -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-8 md:gap-12 w-full max-w-3xl px-4 mt-4">
+                <!-- Sisi Kiri: Tombol Menu Utama -->
+                <div class="menu-buttons flex flex-col gap-3 w-64 shrink-0">
+                    <button class="btn" id="start-btn">MAIN SEKARANG</button>
+                    <button class="btn" id="guide-btn" style="background: #10b981; border-color: #34d399; box-shadow: 0 5px 0 #064e3b;">📖 PETUNJUK</button>
+                    <button class="btn btn-blue" id="leaderboard-btn">🏆 PAPAN SKOR</button>
+                </div>
+                
+                <div class="flex flex-col items-center bg-slate-900/95 border-4 border-indigo-500 rounded-2xl p-5 w-80 shadow-2xl relative">
+                    <h3 class="text-indigo-300 font-bold text-sm uppercase tracking-wider mb-4 text-center">Pilih Karakter</h3>
+                    <div class="flex gap-6 justify-center items-center">
+                        <!-- Karakter 1 (Mariolpg) -->
+                        <button id="char-1-btn" class="relative group p-3 rounded-2xl border-4 border-yellow-400 bg-slate-800 hover:bg-slate-700 transition-all active:scale-95 flex flex-col items-center w-32 shadow-lg">
+                            <img src="https://imgur.com/exLjZJT.png" alt="Mariolpg" class="w-16 h-24 object-contain filter drop-shadow-[0_6px_10px_rgba(0,0,0,0.6)] transition-transform group-hover:scale-105 duration-300">
+                            <span class="text-white text-xs mt-2 font-black tracking-wide">Mariolpg</span>
+                        </button>
+                        <!-- Karakter 2 (Marialpg) -->
+                        <button id="char-2-btn" class="relative group p-3 rounded-2xl border-4 border-transparent bg-slate-800 hover:bg-slate-700 transition-all active:scale-95 flex flex-col items-center w-32 shadow-lg">
+                            <img src="https://imgur.com/hxPK57c.png" alt="Marialpg" class="w-16 h-24 object-contain filter drop-shadow-[0_6px_10px_rgba(0,0,0,0.6)] transition-transform group-hover:scale-105 duration-300">
+                            <span class="text-white text-xs mt-2 font-black tracking-wide">Marialpg</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Leaderboard Modal -->
     <div id="leaderboard-modal" class="overlay hidden">
-        <div class="box-ui leaderboard-box">
+        <div class="box-ui leaderboard-box ui-scale-wrapper">
             <h2>🏆 Papan Skor Peringkat</h2>
             <div id="lb-loading">Memuat data dari server...</div>
             <div class="podium-container hidden" id="podium-container">
@@ -232,84 +325,139 @@
         </div>
     </div>
 
+    <!-- Guide Modal -->
+    <div id="guide-modal" class="overlay hidden" style="z-index: 1200;">
+        <div class="box-ui ui-scale-wrapper message-box" style="border-color: #10b981; max-width: 600px; background: linear-gradient(to bottom, #0f172a, #064e3b);">
+            <h2 style="color: #34d399; font-family: 'Fredoka One', cursive; font-size: 28px; text-transform: uppercase; margin-bottom: 15px;">🎮 Petunjuk Permainan</h2>
+            <div id="guide-content" style="text-align: left; font-family: 'Inter', sans-serif; font-size: 14px; max-height: 50vh; overflow-y: auto; padding-right: 10px; color: #cbd5e1; line-height: 1.6;">
+                <p class="mb-3 font-bold text-white text-base">Cara Bergerak & Kontrol:</p>
+                <ul class="list-disc list-inside mb-4 space-y-1">
+                    <li><span class="text-yellow-400 font-bold">HP / Tablet (Sentuh)</span>: Gunakan tombol virtual di layar. Tombol <span class="font-bold">Kiri & Kanan</span> di sebelah kiri layar, serta tombol <span class="font-bold">Bawah & Lompat</span> di sebelah kanan layar.</li>
+                    <li><span class="text-yellow-400 font-bold">Laptop / PC (Keyboard)</span>: Gunakan tombol <kbd class="bg-slate-700 px-1.5 py-0.5 rounded text-xs text-white">A</kbd> / <kbd class="bg-slate-700 px-1.5 py-0.5 rounded text-xs text-white">D</kbd> atau tombol arah <kbd class="bg-slate-700 px-1.5 py-0.5 rounded text-xs text-white">←</kbd> / <kbd class="bg-slate-700 px-1.5 py-0.5 rounded text-xs text-white">→</kbd> untuk bergerak.</li>
+                    <li><span class="text-yellow-400 font-bold">Lompat</span>: Tekan tombol <kbd class="bg-slate-700 px-1.5 py-0.5 rounded text-xs text-white">W</kbd>, tombol arah <kbd class="bg-slate-700 px-1.5 py-0.5 rounded text-xs text-white">↑</kbd>, atau <kbd class="bg-slate-700 px-1.5 py-0.5 rounded text-xs text-white">Space</kbd>.</li>
+                    <li><span class="text-yellow-400 font-bold">Menunduk</span>: Tekan tombol <kbd class="bg-slate-700 px-1.5 py-0.5 rounded text-xs text-white">S</kbd> atau tombol arah <kbd class="bg-slate-700 px-1.5 py-0.5 rounded text-xs text-white">↓</kbd>.</li>
+                </ul>
+                
+                <p class="mb-3 font-bold text-white text-base">Fungsi Blok & Elemen Spesial:</p>
+                <ul class="list-disc list-inside mb-4 space-y-2">
+                    <li><span class="text-orange-400 font-bold">Blok Tanda Tanya (?)</span>: Merupakan <span class="font-bold text-white">Blok Kuis AI</span>. Sundul blok ini untuk memicu tantangan kuis cerdas seputar materi AI!</li>
+                    <li><span class="text-yellow-400 font-bold">Blok Koin Emas</span>: Sundul blok ini untuk mengumpulkan koin emas dan meningkatkan skor.</li>
+                    <li><span class="text-emerald-400 font-bold">Pipa Ungu Misterius</span>: Berdiri di atasnya dan tekan tombol <span class="font-bold text-white">Bawah</span> untuk memasuki <span class="text-emerald-400 font-bold">Ruang Baca AI</span> guna mempelajari materi khusus.</li>
+                    <li><span class="text-red-400 font-bold">Jamur Merah / Biru / Hijau</span>: Memberikan kekuatan khusus (Membesar, Terbang, atau Nyawa Tambahan / 1-UP).</li>
+                </ul>
+
+                <p class="mb-3 font-bold text-white text-base">Fitur 🤖 AI Tutor:</p>
+                <p class="mb-4">
+                    Saat berada di dalam menu kuis dan Anda merasa ragu dengan jawaban Anda, klik tombol <span class="text-purple-400 font-bold">Tanya AI Tutor</span>. AI Tutor akan memberikan penjelasan petunjuk yang cerdas untuk mengarahkan Anda ke jawaban yang benar. Jumlah bantuan ini terbatas pada setiap levelnya!
+                </p>
+
+                <p class="mb-3 font-bold text-white text-base">Syarat Menyelesaikan Level:</p>
+                <p class="mb-4">
+                    Anda wajib menyelesaikan <span class="text-yellow-400 font-bold">semua tantangan kuis</span> terlebih dahulu sebelum bendera akhir level dapat dikibarkan. Jika masih ada kuis yang tersisa, bendera tidak akan merespons dan Anda akan diminta menjawab kuis terlebih dahulu!
+                </p>
+            </div>
+            <button class="btn" id="btn-close-guide" style="margin-top: 15px; background: #10b981; border-color: #34d399; box-shadow: 0 5px 0 #064e3b;">TUTUP</button>
+        </div>
+    </div>
+
+    <!-- HUD Overlay -->
     <div id="hud" class="hidden">
         <div class="stats" style="position:relative;">
-            ❤️ <span id="ui-lives">3</span> <span style="color:#aaa;">|</span> 
-            💰 <span id="ui-score">0</span> <span style="color:#aaa;">|</span> 
-            🚩 Lv <span id="ui-level">1</span>
+            ❤️ <span id="ui-lives">3</span> <span style="color:#475569;">|</span> 
+            💰 <span id="ui-score">0</span> <span style="color:#475569;">|</span> 
+            🚩 <span id="ui-level-name">Level 1: AI di Rumah</span>
         </div>
         <div class="top-buttons">
+            <button class="hud-btn zoom-out-global" title="Perkecil Layar">🔍-</button>
+            <button class="hud-btn zoom-in-global" title="Perbesar Layar">🔍+</button>
             <button id="fullscreen-hud-btn" class="hud-btn">⛶</button>
             <button id="bgm-btn" class="hud-btn active-bgm">🎵</button>
-            <button id="menu-btn" class="hud-btn" style="background: #e52521; color: white; border-color: white;">Menu</button>
+            <button id="menu-btn" class="hud-btn" style="background: #ef4444; color: white; border-color: #f87171; box-shadow: 0 4px 0 #991b1b;">Menu</button>
         </div>
     </div>
 
+    <!-- Touch controls for mobile/tablet -->
     <div id="touch-controls" class="hidden">
         <div class="touch-group">
-            <div class="t-btn" id="t-left">Kiri</div><div class="t-btn" id="t-right">Kanan</div>
+            <div class="t-btn" id="t-left">Kiri</div>
+            <div class="t-btn" id="t-right">Kanan</div>
         </div>
         <div class="touch-group">
-            <div class="t-btn" id="t-down" style="height: 60px;">Bawah</div><div class="t-btn t-btn-jump" id="t-jump">Lompat</div>
+            <div class="t-btn" id="t-down">Bawah</div>
+            <div class="t-btn t-btn-jump" id="t-jump">Lompat</div>
         </div>
     </div>
 
-    <!-- Modal Kuis Terintegrasi -->
+    <!-- Integrated Interactive Quiz Modal -->
     <div id="quiz-modal" class="overlay hidden">
-        <div class="quiz-box">
-            <h2 id="quiz-title">Kuis Wawasan!</h2>
-            <p id="quiz-question" style="font-size: 18px; color:#333; margin-bottom: 10px; font-weight:bold;"></p>
-            <div id="quiz-interactive-area"></div>
+        <div class="quiz-box ui-scale-wrapper">
+            <h2 id="quiz-title">Tantangan Cerdas AI!</h2>
+            <p id="quiz-question" style="font-size: 18px; color:#e2e8f0; margin-bottom: 10px; font-weight:bold; white-space: pre-wrap;"></p>
+            <div id="quiz-interactive-area" style="width: 100%;"></div>
+            
+            <!-- AI Tutor Help Block -->
+            <button class="q-btn" id="btn-ai-tutor" style="background: #8b5cf6; margin-top: 15px; box-shadow: 0 4px 0 #5b21b6;">🤖 Tanya AI Tutor (Sisa: <span id="ai-count">3</span>)</button>
+            <div id="ai-tutor-message" class="hidden" style="margin-top:15px; padding:15px; background:#2e1065; border-left:5px solid #8b5cf6; border-radius:8px; text-align:left; font-size:14px; color:#ddd; font-family:sans-serif; line-height: 1.5;"></div>
+            
             <button class="btn btn-blue hidden" id="btn-submit-quiz" style="margin-top: 15px;">Cek Jawaban</button>
         </div>
     </div>
 
-    <!-- Modal Perpustakaan -->
+    <!-- Library Modal (Ruang Baca) -->
     <div id="library-modal" class="overlay hidden">
-        <div class="library-box">
-            <h2>📚 Ruang Baca</h2>
-            <div id="lib-content-area" style="background:#f9f9f9; max-height: 45vh; overflow-y: auto; padding:15px; border-radius:10px; text-align:left; min-height:150px; font-size: 16px; line-height: 1.5; color: #333;"></div>
+        <div class="library-box ui-scale-wrapper">
+            <h2>📚 Ruang Baca AI</h2>
+            <div id="lib-content-area" style="background:#0f172a; max-height: 45vh; overflow-y: auto; padding:15px; border-radius:10px; text-align:left; min-height:150px; font-size: 16px; line-height: 1.5; color: #cbd5e1;"></div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px;">
                 <button id="lib-prev" class="btn btn-blue" style="padding:10px 15px; width:auto; font-size: 14px;">&laquo; Prev</button>
-                <span id="lib-page-indicator" style="font-weight:bold; color: #333;">1 / 4</span>
+                <span id="lib-page-indicator" style="font-weight:bold; color: #fff;">1 / 4</span>
                 <button id="lib-next" class="btn btn-blue" style="padding:10px 15px; width:auto; font-size: 14px;">Next &raquo;</button>
             </div>
-            <button class="btn" id="lib-close" style="margin-top:20px;">Selesai Belajar</button>
+            <button class="btn" id="lib-close" style="margin-top:20px; background:#10b981; border-color:#34d399; box-shadow: 0 5px 0 #064e3b;">Selesai Belajar</button>
         </div>
     </div>
 
-    <!-- Modal Victory -->
+    <!-- Victory Modal -->
     <div id="victory-modal" class="overlay hidden" style="z-index: 1300;">
-        <div class="box-ui victory-box">
-            <img src="https://imgur.com/x1XOhm6.png" alt="Victory" class="victory-img">
-            <h2 class="victory-title">LEVEL SELESAI!</h2>
+        <div class="box-ui victory-box ui-scale-wrapper">
+            <img src="https://imgur.com/iAShFho.png" alt="Victory" class="victory-img">
+            <h2 class="victory-title">TANTANGAN SELESAI!</h2>
             <div class="score-display">
-                <span>SKOR KAMU</span>
+                <span>SKOR PETUALANGAN KAMU</span>
                 <h3 id="victory-score">0</h3>
             </div>
-            <button class="btn btn-blue" id="btn-next-level" style="margin-top: 20px; font-size: 22px; padding: 15px 40px;">Lanjut Level Berikutnya</button>
+            <button class="btn btn-blue" id="btn-next-level" style="margin-top: 20px; font-size: 22px; padding: 15px 40px; background:#10b981; border-color:#34d399; box-shadow:0 5px 0 #064e3b;">Lanjut Level Berikutnya</button>
         </div>
     </div>
 
-    <!-- Modal Game Over & Universal Message -->
+    <!-- Game Over & Universal Message Overlay -->
     <div id="message-overlay" class="overlay hidden" style="z-index: 1300;">
         <div id="msg-box" class="box-ui message-box">
-            <img id="msg-image" src="https://imgur.com/UcopyEK.png" alt="Message Icon" class="victory-img">
+            <img id="msg-image" src="https://imgur.com/wvezSw2.png" alt="Message Icon" class="victory-img">
             <h1 id="message-text" class="message-title">Game Over</h1>
             <button class="btn" id="msg-btn" style="margin-top: 20px; font-size: 20px; padding: 15px 30px;">Lanjut</button>
+        </div>
+    </div>
+
+    <!-- Confirm Exit Modal -->
+    <div id="confirm-exit-modal" class="overlay hidden" style="z-index: 1400;">
+        <div class="box-ui message-box ui-scale-wrapper" style="border-color: #f59e0b; background: linear-gradient(to bottom, #0f172a, #451a03);">
+            <h2 style="color: #fbbf24; font-family: 'Fredoka One', cursive; margin-bottom: 10px;">Kembali ke Menu?</h2>
+            <p style="font-family: sans-serif; font-size: 16px; margin-bottom: 20px; color: #cbd5e1;">Progress level saat ini akan hilang.</p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn" id="btn-cancel-exit" style="background: #475569; color: #fff; box-shadow: 0 5px 0 #1e293b; border-color: #64748b;">Batal</button>
+                <button class="btn" id="btn-confirm-exit" style="background: #ef4444; border-color:#f87171; box-shadow:0 5px 0 #991b1b;">Ya, Keluar</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-/** ==============================
- * KONFIGURASI DAN VARIABEL GLOBAL
- * ============================== */
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const GAS_URL = "https://script.google.com/macros/s/AKfycbzxrADgurGXXFZyC8jwkN_g9afI7UQsOsNxCyqX8spWW5h3wBvJ_48XzyXF26oW4D6r/exec";
 
-let gameState = 'login'; 
+let gameState = 'splash'; 
 let requestID;
 let currentPlayer = { name: '', school: '' };
 
@@ -317,11 +465,14 @@ const TILE_SIZE = 40;
 const GRAVITY = 0.6;
 const FRICTION = 0.8;
 let camera = { x: 0, y: 0 };
+let zoomLevel = 1.0;
 const keys = { right: false, left: false, jump: false, down: false, run: false };
 
 let score = 0;
 let lives = 3;
 let currentLevel = 1;
+
+let selectedCharacterUrl = "https://imgur.com/exLjZJT.png";
 
 let mapTiles = []; let mapWidth = 0; let mapHeight = 0;
 let blocks = []; let items = []; let enemies = []; let particles = []; let floatingTexts = [];
@@ -333,9 +484,18 @@ let returnPosY = 0;
 let frameCount = 0;
 
 let totalQuestions = 0, answeredQuestions = 0, warningTimer = 0;
+let aiTutorUses = 3; 
 let specialPoints = {};
 let clouds = [], birds = [], bgMountains = [], bgTrees = [];
 let currentAvailableQuestions = [];
+
+// Quiz Global States
+let activeQuizData = null;
+let activeQuizTargetR = 0;
+let activeQuizTargetC = 0;
+let currentOrderState = [];
+let currentMatchesState = {};
+let currentSelectedMc = "";
 
 function resizeCanvas() { 
     canvas.width = window.innerWidth; 
@@ -344,15 +504,32 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas); 
 resizeCanvas(); 
 
-/** ASSETS */
+function updateCamera() {
+    let vWidth = canvas.width / zoomLevel;
+    let vHeight = canvas.height / zoomLevel;
+
+    camera.x = Math.max(0, player.x - vWidth / 2 + player.width/2);
+    let maxCamX = mapWidth * TILE_SIZE - vWidth;
+    if(camera.x > maxCamX) camera.x = Math.max(0, maxCamX);
+
+    let playerScreenY = player.y - camera.y;
+    if (playerScreenY < vHeight * 0.3) {
+        camera.y -= (vHeight * 0.3 - playerScreenY) * 0.15;
+    } else if (playerScreenY > vHeight * 0.7) {
+        camera.y += (playerScreenY - vHeight * 0.7) * 0.15;
+    }
+    if (camera.y < 0) camera.y = 0;
+    let maxCamY = mapHeight * TILE_SIZE - vHeight;
+    if (maxCamY > 0 && camera.y > maxCamY) camera.y = maxCamY;
+}
+
 const assets = { player: new Image(), flag: new Image(), enemy: new Image() };
-assets.player.src = "https://imgur.com/z6sD9iS.png";
+assets.player.src = "https://imgur.com/exLjZJT.png";
 assets.flag.src = "https://imgur.com/I2DODhL.png";
 assets.enemy.src = "https://imgur.com/sjcux6J.png";
 
-/** AUDIO SYSTEM */
 const AudioContext = window.AudioContext || window.webkitAudioContext;
-let audioCtx;
+let audioCtx; 
 function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
 
 function playSound(type) {
@@ -390,24 +567,25 @@ function stopBGM() { isBgmPlaying = false; cancelAnimationFrame(bgmReqId); }
 
 document.getElementById('bgm-btn').addEventListener('click', function() {
     bgmEnabled = !bgmEnabled;
-    if(bgmEnabled) { this.classList.add('active-bgm'); this.innerText = '🎵'; this.style.background = '#4caf50'; this.style.color = '#fff'; startBGM(); } 
-    else { this.classList.remove('active-bgm'); this.innerText = '🔇'; this.style.background = '#e52521'; this.style.color = '#fff'; stopBGM(); }
+    if(bgmEnabled) { this.classList.add('active-bgm'); this.innerText = '🎵'; this.style.background = '#059669'; this.style.borderColor = '#34d399'; startBGM(); } 
+    else { this.classList.remove('active-bgm'); this.innerText = '🔇'; this.style.background = '#ef4444'; this.style.borderColor = '#f87171'; stopBGM(); }
 });
 
-// Fitur Tombol Menu di HUD
 document.getElementById('menu-btn').addEventListener('click', function() {
-    if(confirm("Apakah kamu yakin ingin kembali ke Menu Utama? Progress level saat ini akan hilang.")) {
-        showMainMenu();
-    }
+    document.getElementById('confirm-exit-modal').classList.remove('hidden');
 });
 
-/** MAPS & LOGIKA PIPA
- * G = Ground, B = Brick, ? = Koin, Q = Kuis, S = Flag/Finish, M = Jamur, E = Enemy
- * P = Pipa Atas Masuk (Ke Bawah), X = Pipa Bawah Keluar (Ke Atas), U = Tempat Keluar
- * L = Pipa Library, N = Jamur Nyawa (1-UP) Tersembunyi, Z = Jamur Terbang (Blue/Fly)
- */
+document.getElementById('btn-cancel-exit').addEventListener('click', function() {
+    document.getElementById('confirm-exit-modal').classList.add('hidden');
+});
+
+document.getElementById('btn-confirm-exit').addEventListener('click', function() {
+    document.getElementById('confirm-exit-modal').classList.add('hidden');
+    showMainMenu();
+});
+
 const maps = [
-    [ // LEVEL 1: Mudah (Soal Pilihan Ganda)
+    [ // LEVEL 1: AI di Rumah
         "                                                                 ",
         "                                                                 ",
         "                                                                 ",
@@ -416,11 +594,11 @@ const maps = [
         "                                                                 ",
         "                                            Q                    ",
         "                        B?M                                      ",
-        "      M      Q                                                 S ",
+        "      M    Q                                                   S ",
         "                  B?Q?BBZBB                BBBBB                 ",
-        "         E              BB                                QN     ",
-        "      B?B   L           BB      E      P              X          ",
-        " R R      R l           R         R    p   E          X     R    ",
+        "         E               BBB                               QN    ",
+        "      B?B   L            BB        E      P                      ",
+        " R R      R l      X     R         R      p   E               R  ",
         "GGGGGGGGGGGGGG  GGGGGGGGGGGGGGGGG GGGGGGGGGGGGGGGGGGGGGGGGGGGGGG ",
         "                                                                 ",
         "                                                                 ",
@@ -433,7 +611,7 @@ const maps = [
         "                        GGGGGGGGGGGGGGG                          ",
         "                                                                 "
     ],
-    [ // LEVEL 2: Sedang (Soal Susun Kalimat)
+    [ // LEVEL 2: Dunia Sekolah Digital
         "                                                                                                   ",
         "                                                                                                   ",
         "                                                                                                   ",
@@ -441,11 +619,11 @@ const maps = [
         "                                                                                         Q         ",
         "                M                                  Q                                               ",
         "                       B?B                                                                         ",
-        "      Q                               QN       E                   M                GGGGGGGGGGGGGG ",
-        "         E      BB   B?Q?ZBBBB     Q           BBBBB?BB                    E         B             ",
-        "     BBBBB     BBB                         BBB                 Q       BB?BBNZ       B             ",
-        "              BBBBB             P          B?B       X                               B             ",
-        " R      R     BBBBBB   E        p     E     R        X  E                  RR        B             ",
+        "      Q                               ?N       E                   M                GGGGGGGGGGGGGG ",
+        "         E      BB   B???ZBBBB     Q           BBBBB?BB                    E         B             ",
+        "     BBBBB     BBB                          BBB                 Q       BB?BBNZ      B             ",
+        "              BBBBB             P       X   B?B                                      B             ",
+        " R      R     BBBBBB   E        p     E X    R          E                  RR        B             ",
         "GGGGGGGGGGGG  GGGGGGGGGGGGGG  GGGGGGGGGGGGGGGGGGGGGGGGGGGG   GGGGGGGGGGGGGGGGGGGGGGGGG             ",
         "                                                                                                   ",
         "                                                 M                                                 ",
@@ -453,12 +631,12 @@ const maps = [
         "                          u                        BBBB                                            ",
         "                        BBBB    BBBB                                                               ",
         "                                   B           ?BB                                                 ",
-        "                             Q     B                                                               ",
+        "                             ?     B                                                               ",
         "                             E     E                   O                                           ",
         "                        GGGGGGGGGGGGGGGGG   GGGGGGGGGGGG                                           ",
         "                                                                                                   "
     ],
-    [ // LEVEL 3: Sulit (Soal Drag & Drop / Isi Rumpang)
+    [ // LEVEL 3: AI di Kehidupan Sehari-hari
         "                                                                                                                          ",
         "                                                                                                              Q           ",
         "                                          M               Q                                                               ",
@@ -478,7 +656,7 @@ const maps = [
         "                                     u                   M                                                                ",
         "                                   BBBBBBB                          BBBBBB                                                ",
         "                                              BBBBB                                                                       ",
-        "                                       Q    N      B     BBBBB     Q   ?????                                              ",
+        "                                       ?    N      B     BBBBB     ?   ?????                                              ",
         "                                   B              B                                                                       ",
         "                                   B   E     E   B   E        E             O                                             ",
         "                                   GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG                                             ",
@@ -486,16 +664,15 @@ const maps = [
     ]
 ];
 
-/** PLAYER LOGIC */
 const player = {
     x: 50, y: 100, originalHeight: 40, crouchHeight: 24, width: 30, height: 40,
     vx: 0, vy: 0, speed: 5, jumpPower: 11, grounded: false, facingLeft: false, runFrame: 0, invincibleTimer: 0, finishedLevel: false, isJumping: false, jumpHoldTimer: 0, isCrouching: false, isBig: false, isFlying: false, pipeState: null, pipeTimer: 0, pipeTargetType: null, dead: false,
     reset: function() { this.x = 50; this.y = 100; this.vx = 0; this.vy = 0; this.isBig = false; this.isFlying = false; this.originalHeight = 40; this.crouchHeight = 24; this.height = this.originalHeight; this.width = 30; this.isCrouching = false; this.invincibleTimer = 0; this.finishedLevel = false; this.isJumping = false; this.jumpHoldTimer = 0; this.pipeState = null; this.dead = false; camera.x = 0; camera.y = 0; },
-    makeBig: function() { if (!this.isBig) { this.isBig = true; this.y -= 15; this.originalHeight = 55; this.height = this.originalHeight; this.width = 35; this.crouchHeight = 30; spawnParticles(this.x + this.width/2, this.y + this.height/2, '#fff'); spawnFloatingText("MANTAP!", this.x, this.y-20, '#4caf50'); } },
+    makeBig: function() { if (!this.isBig) { this.isBig = true; this.y -= 15; this.originalHeight = 55; this.height = this.originalHeight; this.width = 35; this.crouchHeight = 30; spawnParticles(this.x + this.width/2, this.y + this.height/2, '#fff'); spawnFloatingText("MANTAP!", this.x, this.y-20, '#10b981'); } },
     makeFly: function() { 
         this.isFlying = true;
-        this.makeBig(); // Jadi besar juga saat dapat sayap
-        spawnFloatingText("BISA TERBANG!", this.x, this.y-20, '#2196F3');
+        this.makeBig(); 
+        spawnFloatingText("BISA TERBANG!", this.x, this.y-20, '#3b82f6');
     },
     shrink: function() { 
         if (this.isFlying) {
@@ -522,7 +699,7 @@ const player = {
         if(this.dead) { this.vy += GRAVITY; this.y += this.vy; return; }
         if(this.finishedLevel || this.pipeState) return;
 
-        // Pipe interactions
+        // Pipe entry check
         if (keys.down && this.grounded && !this.isCrouching && Math.abs(this.vx) < 1) {
             let centerCol = Math.floor((this.x + this.width / 2) / TILE_SIZE);
             let bottomRow = Math.floor((this.y + this.height + 2) / TILE_SIZE);
@@ -537,7 +714,7 @@ const player = {
             }
         }
         
-        // Side Pipe Interactions
+        // Horizontal side pipe entry
         if(keys.right && this.grounded) {
             let rightCol = Math.floor((this.x + this.width + 2) / TILE_SIZE), midRow = Math.floor((this.y + this.height/2) / TILE_SIZE);
             if(mapTiles[midRow] && mapTiles[midRow][rightCol] && mapTiles[midRow][rightCol].type === 12) { 
@@ -545,7 +722,7 @@ const player = {
             }
         }
 
-        // Crouching logic
+        // Crouch activation
         let wantsToCrouch = keys.down && this.grounded;
         if (wantsToCrouch && !this.isCrouching) { this.isCrouching = true; this.height = this.crouchHeight; this.y += (this.originalHeight - this.crouchHeight); } 
         else if (!keys.down && this.isCrouching) {
@@ -555,14 +732,14 @@ const player = {
             if (canStand) { this.isCrouching = false; this.height = this.originalHeight; this.y -= (this.originalHeight - this.crouchHeight); }
         }
 
-        // Movement X
+        // Horizontal velocity
         let currentMaxSpeed = this.isCrouching ? this.speed * 0.4 : this.speed;
         if (keys.right) { this.vx += 0.4; this.facingLeft = false; } else if (keys.left) { this.vx -= 0.4; this.facingLeft = true; }
         if (this.vx > currentMaxSpeed) this.vx -= 0.2; if (this.vx < -currentMaxSpeed) this.vx += 0.2;
         if (this.vx > this.speed) this.vx = this.speed; if (this.vx < -this.speed) this.vx = -this.speed;
         if (!keys.left && !keys.right) { this.vx *= FRICTION; if (Math.abs(this.vx) < 0.1) this.vx = 0; }
 
-        // Jump & Fly (Bisa multi-jump jika terbang)
+        // Jump physics
         if (keys.jump && !this.isJumping) {
             if (this.grounded || this.isFlying) {
                 let speedRatio = Math.abs(this.vx) / this.speed, momentumBonus = Math.pow(speedRatio, 2) * 2; 
@@ -576,9 +753,8 @@ const player = {
         if (keys.jump && this.isJumping && this.jumpHoldTimer > 0) { this.vy -= 0.3; this.jumpHoldTimer--; }
         if (!keys.jump) { this.isJumping = false; this.jumpHoldTimer = 0; }
 
-        // Apply Physics
+        // Apply physics
         this.vy += GRAVITY; 
-        // Kurangi kecepatan jatuh jika punya sayap
         if(this.isFlying && this.vy > 2) this.vy = 2; 
 
         this.x += this.vx; 
@@ -587,37 +763,22 @@ const player = {
         this.grounded = false; 
         checkCollisions(false); 
 
-        // Animation & Invincibility
+        // Update animation ticks
         if (this.grounded) { if (!this.isCrouching && Math.abs(this.vx) > 0.5) this.runFrame += Math.abs(this.vx) * 0.1; else this.runFrame = 0; }
         if (this.invincibleTimer > 0) {
             this.invincibleTimer -= 1/60;
             if(this.invincibleTimer < 0) this.invincibleTimer = 0;
         }
 
-        // Out of bounds death
+        // Void fall
         if (this.y > mapTiles.length * TILE_SIZE + 100) {
             this.die();
         }
 
-        // Camera Update
-        camera.x = Math.max(0, this.x - canvas.width / 2 + this.width/2);
-        if(camera.x > mapWidth*TILE_SIZE - canvas.width) camera.x = mapWidth*TILE_SIZE - canvas.width;
-        if(camera.x < 0) camera.x = 0;
-        
-        // Perbaikan Kamera Vertikal (Deadzone)
-        let playerScreenY = this.y - camera.y;
-        if (playerScreenY < canvas.height * 0.3) {
-            camera.y -= (canvas.height * 0.3 - playerScreenY) * 0.15;
-        } else if (playerScreenY > canvas.height * 0.7) {
-            camera.y += (playerScreenY - canvas.height * 0.7) * 0.15;
-        }
-        if (camera.y < 0) camera.y = 0;
-        let maxCamY = mapHeight * TILE_SIZE - canvas.height;
-        if (maxCamY > 0 && camera.y > maxCamY) camera.y = maxCamY;
+        updateCamera();
     }
 };
 
-/** COLLISIONS & BLOCKS */
 function isSolid(type) { return [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16].includes(type); }
 
 function checkCollisions(isX) {
@@ -634,11 +795,11 @@ function checkCollisions(isX) {
             if (mapTiles[r] && mapTiles[r][c]) {
                 let tile = mapTiles[r][c];
                 
-                // Flag collision (Win / Progress)
-                if (specialPoints.flag && c === Math.floor(specialPoints.flag.x/TILE_SIZE) && r >= Math.floor(specialPoints.flag.y/TILE_SIZE) && r <= Math.floor(specialPoints.flag.y/TILE_SIZE)+9) {
+                let poleTiles = specialPoints.flag ? specialPoints.flag.poleHeight / TILE_SIZE : 0;
+                if (specialPoints.flag && c === Math.floor(specialPoints.flag.x/TILE_SIZE) && r >= Math.floor(specialPoints.flag.y/TILE_SIZE) && r <= Math.floor(specialPoints.flag.y/TILE_SIZE) + poleTiles) {
                     if (answeredQuestions < totalQuestions) {
                         if (warningTimer <= 0) {
-                            spawnFloatingText("Jawab Semua Kuis Dulu!", player.x, player.y - 30, '#e52521');
+                            spawnFloatingText("Pecahkan semua kuis dulu!", player.x, player.y - 30, '#ef4444');
                             warningTimer = 60; 
                         }
                     } else {
@@ -646,7 +807,7 @@ function checkCollisions(isX) {
                             startFlagSlide();
                         } else if (player.grounded && !specialPoints.flag.sliding) {
                             if (warningTimer <= 0) {
-                                spawnFloatingText("Lompat ambil bendera!", player.x, player.y - 30, '#fbd000');
+                                spawnFloatingText("Lompat untuk mengibarkan bendera!", player.x, player.y - 30, '#fbd000');
                                 warningTimer = 60;
                             }
                         }
@@ -671,7 +832,7 @@ function checkCollisions(isX) {
 function hitBlock(r, c) {
     let tile = mapTiles[r][c];
     if (tile.type === 2) { 
-        if (player.isBig || player.isFlying) { mapTiles[r][c] = { type: 0, bumpY: 0 }; playSound('bump'); spawnParticles(c * TILE_SIZE + 20, r * TILE_SIZE + 20, '#a0522d'); } 
+        if (player.isBig || player.isFlying) { mapTiles[r][c] = { type: 0, bumpY: 0 }; playSound('bump'); spawnParticles(c * TILE_SIZE + 20, r * TILE_SIZE + 20, '#b91c1c'); } 
         else { tile.bumpY = -10; playSound('bump'); }
     } else if (tile.type === 3) { 
         tile.type = 6; tile.bumpY = -10; score += 10; updateHUD(); playSound('coin'); items.push(new Coin(c * TILE_SIZE + 10, r * TILE_SIZE));
@@ -687,7 +848,6 @@ function hitBlock(r, c) {
     }
 }
 
-/** ENTITIES */
 class Mushroom {
     constructor(x, y, type = 'big') { 
         this.x = x; this.y = y; this.w = 30; this.h = 30; this.vx = 2; this.vy = 0; this.active = true; 
@@ -718,7 +878,7 @@ class Mushroom {
             } else if (this.type === '1up') {
                 lives++; 
                 score += 100;
-                spawnFloatingText("1-UP", player.x, player.y - 20, '#4caf50');
+                spawnFloatingText("1-UP", player.x, player.y - 20, '#10b981');
             } else if (this.type === 'fly') {
                 player.makeFly();
                 score += 100;
@@ -734,7 +894,7 @@ class Mushroom {
         ctx.fillStyle = '#fceee6'; ctx.fillRect(7, 15, 16, 15);
         ctx.fillStyle = '#000'; ctx.fillRect(11, 18, 2, 5); ctx.fillRect(17, 18, 2, 5);
         
-        ctx.fillStyle = this.type === '1up' ? '#4caf50' : (this.type === 'fly' ? '#2196F3' : '#e52521');
+        ctx.fillStyle = this.type === '1up' ? '#10b981' : (this.type === 'fly' ? '#3b82f6' : '#ef4444');
         ctx.beginPath(); ctx.arc(15, 15, 15, Math.PI, 0); ctx.fill();
         ctx.fillStyle = '#fff';
         ctx.beginPath(); ctx.arc(7, 7, 4, 0, Math.PI*2); ctx.fill();
@@ -746,8 +906,8 @@ class Mushroom {
 
 class Coin {
     constructor(x, y) { this.x = x; this.y = y; this.startY = y; this.vy = -8; this.active = true; }
-    update() { if(!this.active) return; this.vy += GRAVITY; this.y += this.vy; if (this.y > this.startY) { this.active = false; spawnFloatingText("+10", this.x, this.startY, '#fbd000'); } }
-    draw(ctx) { if(this.active) { ctx.fillStyle = '#fbd000'; ctx.beginPath(); ctx.arc(this.x+10, this.y+10, 10, 0, Math.PI*2); ctx.fill(); } }
+    update() { if(!this.active) return; this.vy += GRAVITY; this.y += this.vy; if (this.y > this.startY) { this.active = false; spawnFloatingText("+10", this.x, this.startY, '#fbbf24'); } }
+    draw(ctx) { if(this.active) { ctx.fillStyle = '#fbbf24'; ctx.beginPath(); ctx.arc(this.x+10, this.y+10, 10, 0, Math.PI*2); ctx.fill(); } }
 }
 
 class Enemy {
@@ -783,8 +943,8 @@ class Enemy {
         if (assets.enemy.complete && assets.enemy.naturalHeight !== 0) {
             ctx.drawImage(assets.enemy, 0, 0, this.w, this.h);
         } else {
-            ctx.fillStyle = '#8B4513'; ctx.beginPath(); ctx.arc(16, 16, 16, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(10, 10, 4, 0, Math.PI*2); ctx.arc(22, 10, 4, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#1e1b4b'; ctx.beginPath(); ctx.arc(16, 16, 16, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#6366f1'; ctx.beginPath(); ctx.arc(10, 10, 4, 0, Math.PI*2); ctx.arc(22, 10, 4, 0, Math.PI*2); ctx.fill();
             ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(10, 10, 2, 0, Math.PI*2); ctx.arc(22, 10, 2, 0, Math.PI*2); ctx.fill();
         }
         ctx.restore();
@@ -798,7 +958,6 @@ function spawnFloatingText(text, x, y, color='#fff') {
     floatingTexts.push({ text: text, x: x, y: y, life: 40, color: color });
 }
 
-/** SYSTEM UPDATE & DRAW */
 function updateGame() {
     frameCount++;
     if (warningTimer > 0) warningTimer--;
@@ -809,7 +968,6 @@ function updateGame() {
     particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life--; });
     floatingTexts.forEach(ft => { ft.y -= 1; ft.life--; });
     
-    // Gerakkan awan dan burung
     clouds.forEach(c => { c.x += c.speed; if(c.x > mapWidth*TILE_SIZE) c.x = -200; });
     birds.forEach(b => { 
         b.x += b.speed; b.y += Math.sin(frameCount * 0.1) * 0.5; 
@@ -829,25 +987,63 @@ function updateGame() {
 }
 
 function drawDecorations() {
-    // Gunung Rumput Bulat (Parallax efek)
+    let vWidth = canvas.width / zoomLevel;
     ctx.save();
-    let paraX = camera.x * 0.5; // Bergerak lebih lambat
+    let paraX = camera.x * 0.5; 
     bgMountains.forEach(m => {
         let drawX = m.x + paraX;
-        if (drawX > camera.x - m.r && drawX < camera.x + canvas.width + m.r) {
-            ctx.fillStyle = '#388E3C';
-            // Gunung berpijak tepat di atas tanah (y = 13 * TILE_SIZE)
-            ctx.beginPath(); ctx.arc(drawX, 13 * TILE_SIZE, m.r, Math.PI, 0); ctx.fill();
-            ctx.fillStyle = '#4CAF50';
-            ctx.beginPath(); ctx.arc(drawX, 13 * TILE_SIZE, m.r * 0.8, Math.PI, 0); ctx.fill();
+        if (drawX > camera.x - m.r - 100 && drawX < camera.x + vWidth + m.r + 100) {
+            let yBase = 13 * TILE_SIZE;
+            let mHeight = m.r * 1.1;
+            let mWidth = m.r * 1.3;
+            let peakX = drawX;
+            let peakY = yBase - mHeight;
+
+            // Sisi Kiri (Terang - Slate Gray)
+            ctx.fillStyle = '#475569';
+            ctx.beginPath();
+            ctx.moveTo(peakX, peakY);
+            ctx.lineTo(peakX - mWidth, yBase);
+            ctx.lineTo(peakX, yBase);
+            ctx.closePath();
+            ctx.fill();
+
+            // Sisi Kanan (Bayangan - Slate Gray Gelap)
+            ctx.fillStyle = '#334155';
+            ctx.beginPath();
+            ctx.moveTo(peakX, peakY);
+            ctx.lineTo(peakX + mWidth, yBase);
+            ctx.lineTo(peakX, yBase);
+            ctx.closePath();
+            ctx.fill();
+
+            // Salju Kiri (Peak Snow)
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.moveTo(peakX, peakY);
+            ctx.lineTo(peakX - mWidth * 0.25, peakY + mHeight * 0.25);
+            ctx.lineTo(peakX - mWidth * 0.1, peakY + mHeight * 0.2);
+            ctx.lineTo(peakX, peakY + mHeight * 0.32);
+            ctx.closePath();
+            ctx.fill();
+
+            // Salju Kanan (Peak Snow Bayangan)
+            ctx.fillStyle = '#cbd5e1';
+            ctx.beginPath();
+            ctx.moveTo(peakX, peakY);
+            ctx.lineTo(peakX + mWidth * 0.25, peakY + mHeight * 0.25);
+            ctx.lineTo(peakX + mWidth * 0.1, peakY + mHeight * 0.2);
+            ctx.lineTo(peakX, peakY + mHeight * 0.32);
+            ctx.closePath();
+            ctx.fill();
         }
     });
     ctx.restore();
 
-    // Awan
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    // Awan Putih Bersih di Siang Hari
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
     clouds.forEach(c => {
-        if(c.x > camera.x - 200 && c.x < camera.x + canvas.width + 200) {
+        if(c.x > camera.x - 200 && c.x < camera.x + vWidth + 200) {
             ctx.beginPath();
             ctx.arc(c.x, c.y, 30 * c.scale, Math.PI * 0.5, Math.PI * 1.5);
             ctx.arc(c.x + 30 * c.scale, c.y - 20 * c.scale, 40 * c.scale, Math.PI * 1, Math.PI * 2);
@@ -856,11 +1052,11 @@ function drawDecorations() {
         }
     });
 
-    // Burung
-    ctx.strokeStyle = '#333';
-    ctx.lineWidth = 2;
+    // Burung Berwarna Gelap agar Terbaca di Langit Cerah
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 2.5;
     birds.forEach(b => {
-        if(b.x > camera.x - 50 && b.x < camera.x + canvas.width + 50) {
+        if(b.x > camera.x - 50 && b.x < camera.x + vWidth + 50) {
             let wingY = Math.sin(frameCount * 0.3) * 10;
             ctx.beginPath();
             ctx.moveTo(b.x, b.y); ctx.quadraticCurveTo(b.x + 10, b.y + wingY, b.x + 20, b.y);
@@ -869,29 +1065,29 @@ function drawDecorations() {
         }
     });
 
-    // Pohon
+    // Pohon Hijau Rindang Berbatang Cokelat
     bgTrees.forEach(t => {
-        if(t.x > camera.x - 100 && t.x < camera.x + canvas.width + 100) {
-            // Batang
-            ctx.fillStyle = '#795548';
-            ctx.fillRect(t.x + 15, t.y - 60, 10, 60);
-            // Daun
-            ctx.fillStyle = '#2E7D32';
-            ctx.beginPath(); ctx.arc(t.x + 20, t.y - 60, 25, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(t.x + 5, t.y - 45, 20, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(t.x + 35, t.y - 45, 20, 0, Math.PI*2); ctx.fill();
+        if(t.x > camera.x - 100 && t.x < camera.x + vWidth + 100) {
+            ctx.fillStyle = '#78350f'; // Batang cokelat
+            ctx.fillRect(t.x + 15, t.y - 40, 10, 40);
+            ctx.fillStyle = '#16a34a'; // Daun hijau rimbun
+            ctx.beginPath(); ctx.arc(t.x + 20, t.y - 40, 22, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(t.x + 5, t.y - 30, 18, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(t.x + 35, t.y - 30, 18, 0, Math.PI*2); ctx.fill();
         }
     });
 }
 
 function drawGame() {
-    ctx.fillStyle = player.y > 13 * TILE_SIZE ? '#000' : '#5c94fc';
+    // Warna Langit Siang Hari yang Cerah, Gelap Hanya di Bawah Tanah
+    ctx.fillStyle = player.y > 13 * TILE_SIZE ? '#1e293b' : '#5c94fc'; 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.save();
+    ctx.scale(zoomLevel, zoomLevel);
     ctx.translate(-camera.x, -camera.y);
 
-    if (player.y <= 13 * TILE_SIZE) drawDecorations(); // Gambar alam di-translate agar posisinya pas di dunia
+    if (player.y <= 13 * TILE_SIZE) drawDecorations(); 
 
     for (let r = 0; r < mapHeight; r++) {
         for (let c = 0; c < mapWidth; c++) {
@@ -900,35 +1096,68 @@ function drawGame() {
                 let tx = c * TILE_SIZE, ty = r * TILE_SIZE + tile.bumpY;
                 
                 if (tile.type === 1) { 
-                    ctx.fillStyle = player.y > 13*TILE_SIZE ? '#444' : '#8B4513'; ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
-                    ctx.fillStyle = player.y > 13*TILE_SIZE ? '#666' : '#228B22'; ctx.fillRect(tx, ty, TILE_SIZE, 8);
+                    // Tanah/Rumput (Batang cokelat kemerahan dengan rumput hijau cerah)
+                    ctx.fillStyle = '#9a3412'; 
+                    ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
+                    ctx.fillStyle = '#22c55e'; // Atasan rumput hijau cerah
+                    ctx.fillRect(tx, ty, TILE_SIZE, 8);
                 } else if (tile.type === 2 || tile.type === 5 || tile.type === 7 || tile.type === 8) { 
-                    // Desain Batu Bata Klasik Mario (menyembunyikan jamur rahasia)
-                    ctx.fillStyle = '#cc4a14'; ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
+                    // Bata Klasik Warna Merah Saja
+                    ctx.fillStyle = '#b91c1c'; // Merah cerah
+                    ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
                     
-                    ctx.strokeStyle = '#5a1b04'; ctx.lineWidth = 2;
-                    ctx.beginPath(); ctx.moveTo(tx, ty + TILE_SIZE/2); ctx.lineTo(tx + TILE_SIZE, ty + TILE_SIZE/2); ctx.stroke(); // Tengah Horizontal
-                    ctx.beginPath(); ctx.moveTo(tx + TILE_SIZE/2, ty); ctx.lineTo(tx + TILE_SIZE/2, ty + TILE_SIZE/2); ctx.stroke(); // Vertikal Atas
-                    ctx.beginPath(); ctx.moveTo(tx + TILE_SIZE/4, ty + TILE_SIZE/2); ctx.lineTo(tx + TILE_SIZE/4, ty + TILE_SIZE); ctx.stroke(); // Vertikal Kiri Bawah
-                    ctx.beginPath(); ctx.moveTo(tx + TILE_SIZE*3/4, ty + TILE_SIZE/2); ctx.lineTo(tx + TILE_SIZE*3/4, ty + TILE_SIZE); ctx.stroke(); // Vertikal Kanan Bawah
+                    // Garis-garis semen bata klasik
+                    ctx.strokeStyle = '#f87171'; // Mortar garis kemerahan terang
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath(); 
+                    ctx.moveTo(tx, ty + TILE_SIZE/2); ctx.lineTo(tx + TILE_SIZE, ty + TILE_SIZE/2); 
+                    ctx.moveTo(tx + TILE_SIZE/2, ty); ctx.lineTo(tx + TILE_SIZE/2, ty + TILE_SIZE/2); 
+                    ctx.moveTo(tx + TILE_SIZE/4, ty + TILE_SIZE/2); ctx.lineTo(tx + TILE_SIZE/4, ty + TILE_SIZE); 
+                    ctx.moveTo(tx + TILE_SIZE*3/4, ty + TILE_SIZE/2); ctx.lineTo(tx + TILE_SIZE*3/4, ty + TILE_SIZE); 
+                    ctx.stroke(); 
                     
-                    ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.strokeRect(tx, ty, TILE_SIZE, TILE_SIZE);
+                    // Border penguat
+                    ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 1; ctx.strokeRect(tx, ty, TILE_SIZE, TILE_SIZE);
+                } else if (tile.type === 3) { 
+                    // Kotak Koin Misteri (sebelumnya "?", sekarang logo koin emas)
+                    ctx.fillStyle = '#eab308'; 
+                    ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
+                    ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 2; ctx.strokeRect(tx, ty, TILE_SIZE, TILE_SIZE);
                     
-                    // Efek Highlight agar lebih 3D
-                    ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(tx, ty, TILE_SIZE, 2);
-                } else if (tile.type === 3 || tile.type === 4) { 
-                    ctx.fillStyle = tile.type === 4 ? '#2196F3' : '#FBD000'; ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
-                    ctx.fillStyle = '#000'; ctx.font = "bold 24px Arial"; ctx.textAlign="center"; ctx.textBaseline="middle";
-                    ctx.fillText(tile.type === 4 ? "Q" : "?", tx + TILE_SIZE/2, ty + TILE_SIZE/2);
-                    ctx.strokeStyle = '#000'; ctx.strokeRect(tx, ty, TILE_SIZE, TILE_SIZE);
+                    // Menggambar koin emas bulat mengkilap di tengah
+                    ctx.fillStyle = '#fbbf24'; 
+                    ctx.beginPath();
+                    ctx.arc(tx + 20, ty + 20, 11, 0, Math.PI*2);
+                    ctx.fill();
+                    
+                    ctx.strokeStyle = '#b45309'; 
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.arc(tx + 20, ty + 20, 11, 0, Math.PI*2);
+                    ctx.stroke();
+                    
+                    // Detail koin vertikal di tengah
+                    ctx.fillStyle = '#b45309';
+                    ctx.fillRect(tx + 18, ty + 13, 4, 14);
+
+                } else if (tile.type === 4) { 
+                    // Kotak Kuis (sebelumnya "AI", sekarang "?")
+                    ctx.fillStyle = '#f97316'; // warna oranye terang mencolok
+                    ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
+                    ctx.fillStyle = '#ffffff'; ctx.font = "bold 26px Arial"; ctx.textAlign="center"; ctx.textBaseline="middle";
+                    ctx.fillText("?", tx + TILE_SIZE/2, ty + TILE_SIZE/2);
+                    ctx.strokeStyle = '#ea580c'; ctx.lineWidth = 2; ctx.strokeRect(tx, ty, TILE_SIZE, TILE_SIZE);
                 } else if (tile.type === 6) { 
-                    ctx.fillStyle = '#8B4513'; ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
-                    ctx.strokeStyle = '#000'; ctx.strokeRect(tx, ty, TILE_SIZE, TILE_SIZE);
+                    // Blok Kosong (Batu Abu-Abu)
+                    ctx.fillStyle = '#78716c'; 
+                    ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
+                    ctx.strokeStyle = '#44403c'; ctx.strokeRect(tx, ty, TILE_SIZE, TILE_SIZE);
                 } else if ([10,11,12,13,14,15,16].includes(tile.type)) { 
+                    // Pipa Hijau Terang Siang Hari (atau Ungu untuk Area Rahasia)
                     let isPurple = (tile.type === 15 || tile.type === 16);
-                    let baseColor = isPurple ? '#9C27B0' : '#00C853';
-                    let lightColor = isPurple ? '#E1BEE7' : '#B9F6CA';
-                    let darkColor = isPurple ? '#4A148C' : '#1B5E20';
+                    let baseColor = isPurple ? '#7c3aed' : '#16a34a'; 
+                    let lightColor = isPurple ? '#a78bfa' : '#4ade80';
+                    let darkColor = isPurple ? '#4c1d95' : '#15803d';
                     
                     let gradient = ctx.createLinearGradient(tx, ty, tx + TILE_SIZE, ty);
                     gradient.addColorStop(0, darkColor); gradient.addColorStop(0.3, lightColor);
@@ -961,16 +1190,15 @@ function drawGame() {
                         ctx.fillStyle = '#000'; ctx.fillRect(tx + TILE_SIZE - 10, ty + 4, 10, TILE_SIZE - 8);
                     }
                 } else if (tile.type === 20) { 
-                    // Better Grass/Bush
-                    ctx.fillStyle = '#2E7D32'; // Dark green
+                    // Tanaman Hias Siang Hari
+                    ctx.fillStyle = '#15803d'; 
                     ctx.beginPath();
-                    ctx.arc(tx + TILE_SIZE/2, ty + TILE_SIZE, TILE_SIZE/2, Math.PI, 0); // Center bump
-                    ctx.arc(tx + TILE_SIZE*0.8, ty + TILE_SIZE, TILE_SIZE/3, Math.PI, 0); // Right bump
-                    ctx.arc(tx + TILE_SIZE*0.2, ty + TILE_SIZE, TILE_SIZE/3, Math.PI, 0); // Left bump
+                    ctx.arc(tx + TILE_SIZE/2, ty + TILE_SIZE, TILE_SIZE/2, Math.PI, 0); 
+                    ctx.arc(tx + TILE_SIZE*0.8, ty + TILE_SIZE, TILE_SIZE/3, Math.PI, 0); 
+                    ctx.arc(tx + TILE_SIZE*0.2, ty + TILE_SIZE, TILE_SIZE/3, Math.PI, 0); 
                     ctx.fill();
                     
-                    // Light green highlight
-                    ctx.fillStyle = '#4CAF50'; 
+                    ctx.fillStyle = '#22c55e'; 
                     ctx.beginPath();
                     ctx.arc(tx + TILE_SIZE/2, ty + TILE_SIZE, TILE_SIZE/2.5, Math.PI, 0); 
                     ctx.arc(tx + TILE_SIZE*0.8, ty + TILE_SIZE, TILE_SIZE/3.5, Math.PI, 0); 
@@ -982,8 +1210,8 @@ function drawGame() {
     }
 
     if(specialPoints.flag) {
-        ctx.fillStyle = '#fff'; ctx.fillRect(specialPoints.flag.x + 18, specialPoints.flag.y, 4, 10*TILE_SIZE);
-        ctx.fillStyle = '#fbd000'; ctx.beginPath(); ctx.arc(specialPoints.flag.x + 20, specialPoints.flag.y - 10, 12, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.fillRect(specialPoints.flag.x + 18, specialPoints.flag.y, 4, specialPoints.flag.poleHeight);
+        ctx.fillStyle = '#818cf8'; ctx.beginPath(); ctx.arc(specialPoints.flag.x + 20, specialPoints.flag.y - 10, 12, 0, Math.PI*2); ctx.fill();
         if(assets.flag.complete && assets.flag.naturalHeight !== 0) {
             let flagY = specialPoints.flag.flagY || (specialPoints.flag.y + 20);
             ctx.drawImage(assets.flag, specialPoints.flag.x - 30, flagY, 60, 60);
@@ -1009,7 +1237,6 @@ function drawGame() {
             drawX = 0; drawY = 0;
         }
 
-        // Gambar Sayap jika terbang
         if (player.isFlying) {
             let wingYAnim = (!player.grounded) ? Math.sin(frameCount * 0.5) * 8 : 0;
             ctx.fillStyle = '#ffffff';
@@ -1026,13 +1253,9 @@ function drawGame() {
 
         if (assets.player.complete && assets.player.naturalHeight !== 0) {
             let animY = (!player.grounded) ? -2 : (Math.sin(player.runFrame) * 2);
-            if(player.isCrouching) {
-                ctx.drawImage(assets.player, drawX, drawY+animY, player.width, player.height); 
-            } else {
-                ctx.drawImage(assets.player, drawX, drawY+animY, player.width, player.height);
-            }
+            ctx.drawImage(assets.player, drawX, drawY+animY, player.width, player.height);
         } else {
-            ctx.fillStyle = '#e52521';
+            ctx.fillStyle = '#6366f1';
             ctx.fillRect(drawX, drawY, player.width, player.height);
         }
         ctx.restore();
@@ -1044,7 +1267,6 @@ function drawGame() {
     ctx.restore();
 }
 
-/** PIPA & FLAG TRANSITIONS */
 function updatePipe() {
     player.pipeTimer++;
     if(player.pipeTimer < 30) {
@@ -1067,8 +1289,11 @@ function updatePipe() {
         gameState = 'playing'; player.pipeState = null;
     }
     
-    camera.x = Math.max(0, player.x - canvas.width / 2 + player.width/2);
-    camera.y = Math.max(0, player.y - canvas.height / 2 + 50);
+    let vWidth = canvas.width / zoomLevel, vHeight = canvas.height / zoomLevel;
+    camera.x = Math.max(0, player.x - vWidth / 2 + player.width/2);
+    camera.y = Math.max(0, player.y - vHeight / 2 + 50);
+    if(camera.x > mapWidth*TILE_SIZE - vWidth) camera.x = Math.max(0, mapWidth*TILE_SIZE - vWidth);
+    if(camera.y > mapHeight*TILE_SIZE - vHeight) camera.y = Math.max(0, mapHeight*TILE_SIZE - vHeight);
 }
 
 function startFlagSlide() {
@@ -1081,24 +1306,29 @@ function startFlagSlide() {
     player.x = specialPoints.flag.x - 10;
     score += 500;
     updateHUD();
-    spawnFloatingText("500", player.x, player.y, '#fff');
+    spawnFloatingText("500", player.x, player.y, '#10b981');
 }
 
 function updateFlagSlide() {
-    if (player.y < specialPoints.flag.y + 8.5 * TILE_SIZE) {
+    let slideBottom = specialPoints.flag.y + specialPoints.flag.poleHeight - player.height;
+    let flagBottom = specialPoints.flag.y + specialPoints.flag.poleHeight - 60; 
+
+    if (player.y < slideBottom) {
         player.y += 3;
         player.runFrame = 0;
     }
-    if (specialPoints.flag.flagY < specialPoints.flag.y + 8.5 * TILE_SIZE) {
+    if (specialPoints.flag.flagY < flagBottom) {
         specialPoints.flag.flagY += 3;
     }
     
-    if (player.y >= specialPoints.flag.y + 8.5 * TILE_SIZE && specialPoints.flag.flagY >= specialPoints.flag.y + 8.5 * TILE_SIZE) {
+    if (player.y > slideBottom) player.y = slideBottom;
+    if (specialPoints.flag.flagY > flagBottom) specialPoints.flag.flagY = flagBottom;
+
+    if (player.y >= slideBottom && specialPoints.flag.flagY >= flagBottom) {
         levelComplete();
     }
     
-    camera.x = Math.max(0, player.x - canvas.width / 2 + player.width/2);
-    if(camera.x > mapWidth*TILE_SIZE - canvas.width) camera.x = mapWidth*TILE_SIZE - canvas.width;
+    updateCamera();
     
     particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life--; });
     floatingTexts.forEach(ft => { ft.y -= 1; ft.life--; });
@@ -1123,21 +1353,23 @@ function teleportToTile(typeId) {
     }
 }
 
-/** MAP & ASSET LOADING */
 function generateNature() {
     clouds = []; birds = []; bgMountains = []; bgTrees = [];
-    // Gunung
-    for(let i=0; i<15; i++) bgMountains.push({ x: Math.random() * mapWidth * TILE_SIZE * 0.8, r: 150 + Math.random() * 200 });
-    // Awan
+    
+    let totalMountains = 6;
+    for(let i=0; i<totalMountains; i++) {
+        bgMountains.push({ 
+            x: (i * ((mapWidth * TILE_SIZE * 0.8) / totalMountains)) + Math.random() * 200, 
+            r: 100 + Math.random() * 120 
+        });
+    }
+
     for(let i=0; i<20; i++) clouds.push({ x: Math.random() * mapWidth * TILE_SIZE, y: 50 + Math.random() * 200, scale: 0.5 + Math.random()*1, speed: 0.2 + Math.random()*0.5 });
-    // Burung
     for(let i=0; i<10; i++) birds.push({ x: Math.random() * mapWidth * TILE_SIZE, y: 100 + Math.random() * 200, speed: 1 + Math.random()*2 });
     
-    // Auto-generate pohon di atas tanah yang rata
     for(let c=5; c<mapWidth-5; c+=3) {
         for(let r=5; r<mapHeight; r++) {
-            if(mapTiles[r][c].type === 1 && Math.random() > 0.6) { // Jika tanah
-                // Cek apakah di atasnya kosong
+            if(mapTiles[r][c].type === 1 && Math.random() > 0.6) { 
                 if(mapTiles[r-1] && mapTiles[r-1][c].type === 0 && mapTiles[r-2] && mapTiles[r-2][c].type === 0) {
                     bgTrees.push({ x: c * TILE_SIZE, y: r * TILE_SIZE });
                     break;
@@ -1147,18 +1379,255 @@ function generateNature() {
     }
 }
 
+const quizLevel1 = [
+    {
+        type: "mc",
+        q: "Apa kepanjangan AI?",
+        options: ["Artificial Internet", "Artificial Intelligence", "Automatic Information", "Artificial Icon"],
+        correct: "Artificial Intelligence"
+    },
+    {
+        type: "mc",
+        q: "Contoh AI di rumah adalah....",
+        options: ["Sapu", "Robot Vacuum", "Ember", "Gayung"],
+        correct: "Robot Vacuum"
+    },
+    {
+        type: "mc",
+        q: "Smart TV menggunakan AI untuk....",
+        options: ["Memberikan rekomendasi tontonan", "Memasak", "Mencuci pakaian", "Menyapu rumah"],
+        correct: "Memberikan rekomendasi tontonan"
+    },
+    {
+        type: "mc",
+        q: "Face Unlock menggunakan AI untuk....",
+        options: ["Mengenali wajah", "Menambah baterai", "Menghapus data", "Mengirim SMS"],
+        correct: "Mengenali wajah"
+    },
+    {
+        type: "mc",
+        q: "AI dibuat untuk....",
+        options: ["Membantu manusia", "Menggantikan seluruh manusia", "Bermain sendiri", "Merusak komputer"],
+        correct: "Membantu manusia"
+    }
+];
+
+const quizLevel2 = [
+    {
+        type: "matching",
+        q: "Hubungkan teknologi AI berikut dengan manfaatnya yang paling tepat.",
+        left: ["ChatGPT", "Google Translate", "Google Lens", "Google Maps"],
+        right: ["Membantu membuat ringkasan", "Menerjemahkan bahasa", "Mengenali objek", "Menentukan rute"],
+        pairs: {
+            "ChatGPT": "Membantu membuat ringkasan",
+            "Google Translate": "Menerjemahkan bahasa",
+            "Google Lens": "Mengenali objek",
+            "Google Maps": "Menentukan rute"
+        }
+    },
+    {
+        type: "matching",
+        q: "Hubungkan aktivitas harian berikut dengan penggunaan teknologi AI yang sesuai.",
+        left: ["Belajar Bahasa Inggris", "Mencari jalan", "Mengetik lebih cepat", "Mengenali wajah"],
+        right: ["AI Translator", "Google Maps", "Keyboard Prediction", "Face Unlock"],
+        pairs: {
+            "Belajar Bahasa Inggris": "AI Translator",
+            "Mencari jalan": "Google Maps",
+            "Mengetik lebih cepat": "Keyboard Prediction",
+            "Mengenali wajah": "Face Unlock"
+        }
+    },
+    {
+        type: "matching",
+        q: "Kombinasikan peralatan berikut berdasarkan kategorinya (AI / Bukan AI).",
+        left: ["Mesin cuci manual", "Robot Vacuum", "Smart Camera", "Sapu"],
+        right: ["AI", "Bukan AI"],
+        pairs: {
+            "Mesin cuci manual": "Bukan AI",
+            "Robot Vacuum": "AI",
+            "Smart Camera": "AI",
+            "Sapu": "Bukan AI"
+        }
+    },
+    {
+        type: "ordering",
+        q: "Susun urutan langkah yang benar saat menggunakan AI untuk belajar.",
+        items: [
+            "Membuka aplikasi AI",
+            "Menuliskan pertanyaan",
+            "Membaca jawaban AI",
+            "Memeriksa kembali informasi",
+            "Menulis dengan bahasa sendiri"
+        ]
+    },
+    {
+        type: "ordering",
+        q: "Urutkan proses mencari informasi menggunakan AI dari awal sampai akhir.",
+        items: [
+            "Menentukan topik",
+            "Bertanya pada AI",
+            "Membaca hasil",
+            "Membandingkan dengan buku",
+            "Menyimpulkan"
+        ]
+    },
+    {
+        type: "matching",
+        q: "Hubungkan jenis teknologi AI dengan bidang penggunaannya yang paling sesuai.",
+        left: ["Google Maps", "Face Unlock", "YouTube Recommendation", "ChatGPT"],
+        right: ["Navigasi", "Keamanan", "Hiburan", "Pendidikan"],
+        pairs: {
+            "Google Maps": "Navigasi",
+            "Face Unlock": "Keamanan",
+            "YouTube Recommendation": "Hiburan",
+            "ChatGPT": "Pendidikan"
+        }
+    },
+    {
+        type: "ordering",
+        q: "Susun alur penggunaan AI yang bertanggung jawab dan beretika.",
+        items: [
+            "Bertanya pada AI",
+            "Membaca hasil",
+            "Mengecek sumber lain",
+            "Memahami isi",
+            "Menggunakan hasil dengan bijak"
+        ]
+    }
+];
+
+const quizLevel3 = [
+    {
+        type: "matching",
+        q: "Seret / Hubungkan objek teknologi AI berikut dengan bidang tempat penggunaannya.",
+        left: ["Robot Vacuum", "Google Maps", "AI Diagnosa", "ChatGPT"],
+        right: ["Rumah", "Transportasi", "Rumah Sakit", "Sekolah"],
+        pairs: {
+            "Robot Vacuum": "Rumah",
+            "Google Maps": "Transportasi",
+            "AI Diagnosa": "Rumah Sakit",
+            "ChatGPT": "Sekolah"
+        }
+    },
+    {
+        type: "matching",
+        q: "Pasangkan manfaat kecerdasan buatan (AI) berikut dengan bidang kerjanya.",
+        left: ["Mendeteksi penyakit", "Menganalisis tanaman", "Mendeteksi transaksi mencurigakan", "Membantu belajar"],
+        right: ["Kesehatan", "Pertanian", "Perbankan", "Pendidikan"],
+        pairs: {
+            "Mendeteksi penyakit": "Kesehatan",
+            "Menganalisis tanaman": "Pertanian",
+            "Mendeteksi transaksi mencurigakan": "Perbankan",
+            "Membantu belajar": "Pendidikan"
+        }
+    },
+    {
+        type: "ordering",
+        q: "Susun tahapan proses medis saat AI membantu tugas dokter menganalisis kondisi pasien.",
+        items: [
+            "Pasien diperiksa",
+            "Analisis gambar",
+            "AI memberi rekomendasi",
+            "Dokter memeriksa hasil",
+            "Dokter menentukan keputusan"
+        ]
+    },
+    {
+        type: "matching",
+        q: "Klasifikasikan contoh perilaku penggunaan AI ke dalam kategori yang tepat.",
+        left: [
+            "AI membantu membuat ringkasan",
+            "AI membantu mencari referensi",
+            "AI mengerjakan seluruh tugas sekolah",
+            "AI digunakan untuk menyontek"
+        ],
+        right: ["Membantu Manusia", "Tidak Tepat"],
+        pairs: {
+            "AI membantu membuat ringkasan": "Membantu Manusia",
+            "AI membantu mencari referensi": "Membantu Manusia",
+            "AI mengerjakan seluruh tugas sekolah": "Tidak Tepat",
+            "AI digunakan untuk menyontek": "Tidak Tepat"
+        }
+    },
+    {
+        type: "ordering",
+        q: "Susun alur pengerjaan tugas menggunakan AI dengan cara yang etis dan benar.",
+        items: [
+            "Mencari informasi",
+            "Bertanya kepada AI",
+            "Mengecek kebenaran",
+            "Menulis dengan bahasa sendiri",
+            "Mengumpulkan tugas"
+        ]
+    },
+    {
+        type: "matching",
+        q: "Kelompokkan aktivitas berikut berdasarkan keterlibatan AI dan manusia.",
+        left: [
+            "Menganalisis data",
+            "Menentukan keputusan medis",
+            "Memberi empati kepada pasien",
+            "Memberikan rekomendasi"
+        ],
+        right: ["AI dapat membantu", "Masih memerlukan manusia"],
+        pairs: {
+            "Menganalisis data": "AI dapat membantu",
+            "Menentukan keputusan medis": "Masih memerlukan manusia",
+            "Memberi empati kepada pasien": "Masih memerlukan manusia",
+            "Memberikan rekomendasi": "AI dapat membantu"
+        }
+    },
+    {
+        type: "ordering",
+        q: "Susun alur sistematis penggunaan Google Maps dari awal sampai tiba di tujuan.",
+        items: [
+            "Menentukan tujuan",
+            "AI menghitung rute",
+            "Pengguna memilih rute",
+            "Perjalanan dimulai",
+            "Sampai tujuan"
+        ]
+    },
+    {
+        type: "matching",
+        q: "TANTANGAN LEVEL BOSS: Klasifikasikan setiap pernyataan berikut ke kolom etika yang tepat.",
+        left: [
+            "Menggunakan AI untuk mencari ide tugas",
+            "Menyalin seluruh jawaban AI tanpa membaca",
+            "Memeriksa kembali informasi dari AI sebelum digunakan",
+            "Mencantumkan sumber ketika menggunakan informasi dari AI",
+            "Menggunakan AI untuk membuat berita bohong",
+            "Meminta AI membantu memahami materi yang sulit"
+        ],
+        right: ["Etis", "Tidak Etis"],
+        pairs: {
+            "Menggunakan AI untuk mencari ide tugas": "Etis",
+            "Menyalin seluruh jawaban AI tanpa membaca": "Tidak Etis",
+            "Memeriksa kembali informasi dari AI sebelum digunakan": "Etis",
+            "Mencantumkan sumber ketika menggunakan informasi dari AI": "Etis",
+            "Menggunakan AI untuk membuat berita bohong": "Tidak Etis",
+            "Meminta AI membantu memahami materi yang sulit": "Etis"
+        }
+    }
+];
+
 function loadLevel(lvlIndex) {
     currentLevel = lvlIndex; mapTiles = []; enemies = []; items = []; particles = []; floatingTexts = []; specialPoints = {};
     totalQuestions = 0; answeredQuestions = 0; warningTimer = 0;
     
+    if (lvlIndex === 1) aiTutorUses = 3;
+    else aiTutorUses += 2; 
+    
     let rawMap = maps[lvlIndex - 1];
     if(!rawMap) { 
         submitScoreToGAS();
-        showMessage("Selamat Semua Level Selesai", "Kembali ke Menu", () => showMainMenu(), true); 
+        showMessage("Hebat! Petualangan AI Selesai!", "Kembali ke Menu", () => showMainMenu(), true); 
         return; 
     }
 
     mapHeight = rawMap.length; mapWidth = rawMap[0].length;
+
+    assets.player.src = selectedCharacterUrl;
 
     for(let r=0; r<mapHeight; r++) {
         let row = [];
@@ -1185,9 +1654,18 @@ function loadLevel(lvlIndex) {
         mapTiles.push(row);
     }
     
+    if (specialPoints.flag) {
+        let fc = Math.floor(specialPoints.flag.x / TILE_SIZE);
+        let fr = Math.floor(specialPoints.flag.y / TILE_SIZE);
+        let groundRow = fr;
+        while (groundRow < mapHeight && mapTiles[groundRow] && !isSolid(mapTiles[groundRow][fc].type)) {
+            groundRow++;
+        }
+        specialPoints.flag.poleHeight = (groundRow - fr) * TILE_SIZE;
+    }
+
     generateNature();
 
-    // Persiapkan soal acak tanpa pengulangan untuk level ini
     if (currentLevel === 1) currentAvailableQuestions = [...quizLevel1].sort(() => Math.random() - 0.5);
     else if (currentLevel === 2) currentAvailableQuestions = [...quizLevel2].sort(() => Math.random() - 0.5);
     else if (currentLevel === 3) currentAvailableQuestions = [...quizLevel3].sort(() => Math.random() - 0.5);
@@ -1220,11 +1698,11 @@ function showMessage(msg, btnText, callback, isWin = false) {
     const msgImg = document.getElementById('msg-image');
 
     msgText.innerText = msg;
-    msgImg.src = isWin ? "https://imgur.com/x1XOhm6.png" : "https://imgur.com/UcopyEK.png";
+    msgImg.src = isWin ? "https://imgur.com/iAShFho.png" : "https://imgur.com/wvezSw2.png";
     
     if (isWin) {
         msgBox.className = "box-ui victory-box";
-        msgText.className = "victory-title";
+        msgText.className = "message-title";
         msgText.style.fontFamily = "'Fredoka One', cursive";
     } else {
         msgBox.className = "box-ui message-box";
@@ -1237,129 +1715,247 @@ function showMessage(msg, btnText, callback, isWin = false) {
     document.getElementById('message-overlay').classList.remove('hidden');
 }
 
-/** DATABASE KUIS BERDASARKAN LEVEL */
-const quizLevel1 = [
-    { q: "Rafi sedang bermain game online saat berpuasa. Temannya mengajak makan karena lapar, tetapi Rafi menolak. Sikap Rafi menunjukkan bahwa puasa mengajarkan …", a: ["Bermain game", "Menahan diri", "Menjadi kuat", "Beristirahat"], correct: 1 },
-    { q: "Dina lupa bahwa ia sedang berpuasa lalu tanpa sengaja minum air. Setelah ingat, ia segera berhenti. Puasa Dina …", a: ["Batal dan harus diganti", "Tetap sah karena tidak sengaja", "Tidak sah sejak pagi", "Harus membayar denda"], correct: 1 },
-    { q: "Budi sudah berusia 14 tahun dan sehat, tetapi ia sengaja tidak berpuasa tanpa alasan. Sikap yang seharusnya dilakukan Budi adalah …", a: ["Tetap tidak berpuasa", "Berpuasa karena sudah wajib", "Mengganti dengan sedekah saja", "Mengabaikan kewajiban"], correct: 1 },
-    { q: "Saat bulan Ramadhan, banyak orang membagikan makanan gratis kepada yang membutuhkan. Kegiatan tersebut menunjukkan hikmah puasa yaitu …", a: ["Menghemat uang", "Melatih empati kepada orang lain", "Mengurangi kegiatan", "Menghindari pekerjaan"], correct: 1 },
-    { q: "Andi sengaja makan siang di sekolah saat bulan Ramadhan padahal ia tidak sedang sakit. Perbuatan Andi termasuk …", a: ["Perbuatan yang membatalkan puasa", "Perbuatan sunnah", "Perbuatan yang dianjurkan", "Perbuatan makruh saja"], correct: 0 },
-    { q: "Seseorang mengunggah video dirinya sedang makan dengan sengaja saat siang Ramadhan untuk bercanda di media sosial. Sikap tersebut sebaiknya …", a: ["Ditiru", "Dianggap biasa", "Dihindari karena tidak menghormati orang berpuasa", "Dijadikan hiburan"], correct: 2 },
-    { q: "Seorang siswa tetap belajar dengan semangat walaupun sedang berpuasa. Hal ini menunjukkan bahwa puasa …", a: ["Menghambat kegiatan", "Mengajarkan disiplin dan tanggung jawab", "Membuat malas belajar", "Mengurangi aktivitas"], correct: 1 },
-    { q: "Siti sedang sakit dan dokter menyarankan tidak berpuasa dulu. Dalam Islam, Siti boleh …", a: ["Tetap berpuasa", "Tidak berpuasa dan mengganti di hari lain", "Tidak berpuasa selamanya", "Tidak beribadah"], correct: 1 },
-    { q: "Puasa yang dilakukan umat Islam setiap bulan Ramadhan merupakan contoh puasa …", a: ["Sunnah", "Wajib", "Makruh", "Mubah"], correct: 1 },
-    { q: "Ketika berpuasa, seseorang berusaha menjaga ucapan agar tidak berkata kasar di media sosial. Hal ini menunjukkan bahwa puasa juga melatih …", a: ["Kekuatan fisik", "Pengendalian diri", "Kecepatan berpikir", "Kemampuan berbicara"], correct: 1 }
-];
-
-const quizLevel2 = [
-    { words: ["menahan", "Puasa", "diri", "dan", "adalah", "makan", "dari", "minum"], correct: "Puasa adalah menahan diri dari makan dan minum" },
-    { words: ["Ramadhan", "Puasa", "bulan", "dilakukan", "pada"], correct: "Puasa dilakukan pada bulan Ramadhan" },
-    { words: ["Islam", "bagi", "Puasa", "wajib", "umat", "Ramadhan"], correct: "Puasa Ramadhan wajib bagi umat Islam" },
-    { words: ["sahnya", "puasa", "Niat", "adalah", "salah", "rukun", "satu"], correct: "Niat adalah salah satu rukun sahnya puasa" },
-    { words: ["puasa", "Makan", "sengaja", "membatalkan", "dengan"], correct: "Makan dengan sengaja membatalkan puasa" },
-    { words: ["subuh", "sebelum", "dilakukan", "Niat", "puasa"], correct: "Niat puasa dilakukan sebelum subuh" },
-    { words: ["Puasa", "melatih", "bersabar", "dapat" , "kita"], correct: "Puasa dapat melatih kita bersabar" },
-    { words: ["baligh", "orang", "wajib", "Puasa", "bagi", "yang"], correct: "Puasa wajib bagi orang yang baligh" },
-    { words: ["sunnah", "Puasa", "Senin", "Kamis", "dilakukan"], correct: "Puasa sunnah dilakukan Senin Kamis" },
-    { words: ["lapar", "merasakan", "Orang", "puasa", "bersabar", "ia", "agar"], correct: "Orang puasa merasakan lapar agar ia bersabar" }
-];
-
-const quizLevel3 = [
-    { text: "Saat berpuasa, seseorang harus _____ dari makan, minum, dan perbuatan buruk meskipun sedang menggunakan media sosial.", answer: "Menahan diri" },
-    { text: "Agar puasa sah, seseorang harus membaca _____ sebelum waktu fajar.", answer: "Niat" },
-    { text: "Seorang anak mulai diwajibkan berpuasa ketika sudah mencapai usia _____.", answer: "Baligh" },
-    { text: "Puasa dimulai sejak masuk waktu _____.", answer: "Subuh" },
-    { text: "Puasa berakhir ketika masuk waktu _____.", answer: "Maghrib" },
-    { text: "Puasa yang dilakukan oleh seluruh umat Islam setiap bulan Ramadhan disebut _____.", answer: "Puasa Ramadhan" },
-    { text: "Puasa sunnah yang sering dilakukan untuk melatih disiplin ibadah adalah _____.", answer: "Puasa Senin Kamis" },
-    { text: "Jika seseorang dengan sadar makan siang saat berpuasa, maka itu termasuk _____ yang membatalkan puasa.", answer: "Makan sengaja" },
-    { text: "Menggosok gigi secara berlebihan pada siang hari hingga dikhawatirkan tertelan termasuk perbuatan _____ saat berpuasa.", answer: "Makruh" },
-    { text: "Dengan berpuasa, seseorang dapat lebih memahami kesulitan orang miskin sehingga tumbuh rasa _____.", answer: "Kesabaran" }
-];
-const wordBankLvl3 = ["Baligh", "Niat", "Makan sengaja", "Menahan diri", "Puasa Ramadhan", "Puasa Senin Kamis", "Makruh", "Kesabaran", "Subuh", "Maghrib"];
-
-let activeQuizTargetR = 0, activeQuizTargetC = 0;
-
 function triggerQuiz(r, c) {
-    gameState = 'quiz'; keys.right=false; keys.left=false; keys.jump=false;
+    gameState = 'quiz'; keys.right=false; keys.left=false; keys.jump=false; keys.down=false;
     activeQuizTargetR = r; activeQuizTargetC = c;
+    
     const area = document.getElementById('quiz-interactive-area');
     area.innerHTML = "";
-    document.getElementById('btn-submit-quiz').classList.add('hidden');
+    
+    const submitBtn = document.getElementById('btn-submit-quiz');
+    submitBtn.classList.add('hidden');
 
-    // Tarik soal tanpa pengulangan (pop dari array yang sudah di-shuffle)
     if (currentAvailableQuestions.length === 0) {
-        // Fallback jika blok kuis > jumlah soal di bank
         if (currentLevel === 1) currentAvailableQuestions = [...quizLevel1].sort(() => Math.random() - 0.5);
         else if (currentLevel === 2) currentAvailableQuestions = [...quizLevel2].sort(() => Math.random() - 0.5);
         else if (currentLevel === 3) currentAvailableQuestions = [...quizLevel3].sort(() => Math.random() - 0.5);
     }
     const qData = currentAvailableQuestions.pop();
+    activeQuizData = qData;
 
-    if (currentLevel === 1) {
-        document.getElementById('quiz-title').innerText = "Kuis Pilihan Ganda";
+    currentOrderState = [];
+    currentMatchesState = {};
+    currentSelectedMc = "";
+
+    // 1. FORMAT PILIHAN GANDA (MULTIPLE CHOICE - LEVEL 1)
+    if (qData.type === 'mc') {
+        document.getElementById('quiz-title').innerText = "Tantangan Pilihan Ganda - Level 1";
         document.getElementById('quiz-question').innerText = qData.q;
-        
-        let grid = document.createElement('div'); grid.className = 'answer-grid';
-        qData.a.forEach((ans, idx) => {
-            let btn = document.createElement('button'); btn.className = 'q-btn'; btn.innerText = ans;
-            btn.onclick = () => validateQuiz(idx === qData.correct);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 w-full';
+
+        qData.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'px-4 py-3 bg-slate-800 text-white rounded-xl border-2 border-slate-700 hover:border-blue-500 hover:bg-slate-700 transition-all font-semibold text-left text-xs sm:text-sm';
+            btn.innerText = opt;
+            btn.onclick = () => {
+                Array.from(grid.children).forEach(child => {
+                    child.classList.remove('border-blue-500', 'bg-slate-700');
+                    child.classList.add('border-slate-700', 'bg-slate-800');
+                });
+                btn.classList.add('border-blue-500', 'bg-slate-700');
+                btn.classList.remove('border-slate-700', 'bg-slate-800');
+                currentSelectedMc = opt;
+                submitBtn.classList.remove('hidden');
+            };
             grid.appendChild(btn);
         });
         area.appendChild(grid);
-    } 
-    else if (currentLevel === 2) {
-        document.getElementById('quiz-title').innerText = "Susun Kalimat!";
-        document.getElementById('quiz-question').innerText = "Ketuk kata-kata di bawah ini secara berurutan:";
-        let shuffled = [...qData.words].sort(() => Math.random() - 0.5);
-        
-        let answerArea = document.createElement('div'); answerArea.className = 'answer-area';
-        let wordBank = document.createElement('div'); wordBank.className = 'word-bank';
-        let currentAnswer = [];
 
-        const updateUI = () => {
-            answerArea.innerHTML = "";
-            currentAnswer.forEach((w, index) => {
-                let chip = document.createElement('div'); chip.className = 'word-chip'; chip.innerText = w;
-                chip.onclick = () => { currentAnswer.splice(index, 1); updateUI(); };
-                answerArea.appendChild(chip);
-            });
-            wordBank.innerHTML = "";
-            shuffled.forEach(w => {
-                let chip = document.createElement('div'); chip.className = 'word-chip'; chip.innerText = w;
-                if(currentAnswer.includes(w)) chip.classList.add('used');
-                else chip.onclick = () => { currentAnswer.push(w); updateUI(); };
-                wordBank.appendChild(chip);
-            });
-            let btn = document.getElementById('btn-submit-quiz');
-            if(currentAnswer.length === qData.words.length) {
-                btn.classList.remove('hidden');
-                btn.onclick = () => validateQuiz(currentAnswer.join(" ") === qData.correct);
-            } else { btn.classList.add('hidden'); }
+        submitBtn.onclick = () => {
+            validateQuiz(currentSelectedMc === qData.correct);
         };
-        area.appendChild(answerArea); area.appendChild(wordBank); updateUI();
-    }
-    else if (currentLevel === 3) {
-        document.getElementById('quiz-title').innerText = "Lengkapi Kalimat!";
-        document.getElementById('quiz-question').innerHTML = qData.text.replace("_____", "<span class='answer-slot' id='q3-slot'>...</span>");
-        
-        let wordBank = document.createElement('div'); wordBank.className = 'word-bank';
-        let shuffled = [...wordBankLvl3].sort(() => Math.random() - 0.5);
-        let selectedAns = "";
+    } 
+    // 2. FORMAT MENJODOHKAN (MATCHING - LEVEL 2 & LEVEL 3)
+    else if (qData.type === 'matching') {
+        const isBoss = qData.q.includes("BOSS");
+        document.getElementById('quiz-title').innerText = isBoss ? "TANTANGAN LEVEL BOSS!" : `Hubungkan Pasangan - Level ${currentLevel}`;
+        document.getElementById('quiz-question').innerText = qData.q;
 
-        shuffled.forEach(w => {
-            let chip = document.createElement('div'); chip.className = 'word-chip'; chip.innerText = w;
-            chip.onclick = () => {
-                selectedAns = w;
-                document.getElementById('q3-slot').innerText = w;
-                document.getElementById('q3-slot').classList.add('filled');
-                document.getElementById('btn-submit-quiz').classList.remove('hidden');
-                document.getElementById('btn-submit-quiz').onclick = () => validateQuiz(selectedAns === qData.answer);
-            };
-            wordBank.appendChild(chip);
+        const container = document.createElement('div');
+        container.className = 'flex flex-col gap-3 mt-4 w-full max-h-[42vh] overflow-y-auto pr-1 text-left';
+
+        qData.left.forEach(leftItem => {
+            currentMatchesState[leftItem] = "";
         });
-        area.appendChild(wordBank);
+
+        qData.left.forEach(leftItem => {
+            const row = document.createElement('div');
+            row.className = 'flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-slate-800 border border-slate-700 rounded-xl gap-2';
+
+            const label = document.createElement('span');
+            label.className = 'font-semibold text-xs sm:text-sm text-slate-100 max-w-full sm:max-w-[45%]';
+            label.innerText = leftItem;
+
+            const selectWrapper = document.createElement('div');
+            selectWrapper.className = 'relative w-full sm:w-[50%]';
+
+            const select = document.createElement('select');
+            select.className = 'w-full bg-slate-950 border border-slate-600 rounded-lg p-2 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer';
+            
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = "";
+            defaultOpt.innerText = "-- Pilih Jawaban --";
+            select.appendChild(defaultOpt);
+
+            qData.right.forEach(rightOpt => {
+                const opt = document.createElement('option');
+                opt.value = rightOpt;
+                opt.innerText = rightOpt;
+                select.appendChild(opt);
+            });
+
+            select.onchange = (e) => {
+                currentMatchesState[leftItem] = e.target.value;
+                const allSelected = Object.values(currentMatchesState).every(val => val !== "");
+                if (allSelected) {
+                    submitBtn.classList.remove('hidden');
+                } else {
+                    submitBtn.classList.add('hidden');
+                }
+            };
+
+            selectWrapper.appendChild(select);
+            
+            const icon = document.createElement('span');
+            icon.className = 'absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400 text-xs';
+            icon.innerHTML = '▼';
+            selectWrapper.appendChild(icon);
+
+            row.appendChild(label);
+            row.appendChild(selectWrapper);
+            container.appendChild(row);
+        });
+
+        area.appendChild(container);
+
+        submitBtn.onclick = () => {
+            let allCorrect = true;
+            for (let key in qData.pairs) {
+                if (currentMatchesState[key] !== qData.pairs[key]) {
+                    allCorrect = false;
+                    break;
+                }
+            }
+            validateQuiz(allCorrect);
+        };
     }
+    // 3. FORMAT MENGURUTKAN (ORDERING - LEVEL 2 & LEVEL 3)
+    else if (qData.type === 'ordering') {
+        document.getElementById('quiz-title').innerText = `Susun Urutan - Level ${currentLevel}`;
+        document.getElementById('quiz-question').innerText = qData.q;
+
+        currentOrderState = [...qData.items].sort(() => Math.random() - 0.5);
+        let isIdentical = true;
+        for(let i=0; i<qData.items.length; i++) {
+            if(currentOrderState[i] !== qData.items[i]) {
+                isIdentical = false;
+                break;
+            }
+        }
+        if(isIdentical) {
+            currentOrderState.reverse(); 
+        }
+
+        const listContainer = document.createElement('div');
+        listContainer.className = 'flex flex-col gap-2 mt-4 w-full max-h-[42vh] overflow-y-auto pr-1 text-left';
+        area.appendChild(listContainer);
+
+        function renderOrderingList() {
+            listContainer.innerHTML = "";
+            currentOrderState.forEach((item, index) => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between p-3 bg-slate-800 border border-slate-700 rounded-xl gap-2';
+
+                const itemText = document.createElement('span');
+                itemText.className = 'font-semibold text-xs sm:text-sm text-slate-100 flex-1';
+                itemText.innerText = `${index + 1}. ${item}`;
+
+                const btnGroup = document.createElement('div');
+                btnGroup.className = 'flex gap-1 shrink-0';
+
+                const upBtn = document.createElement('button');
+                upBtn.className = 'w-8 h-8 flex items-center justify-center bg-slate-700 border border-slate-600 rounded-lg text-white hover:bg-slate-600 active:scale-95 text-xs font-bold';
+                upBtn.innerText = '▲';
+                upBtn.disabled = index === 0;
+                if(index === 0) upBtn.style.opacity = '0.3';
+                upBtn.onclick = () => {
+                    if (index > 0) {
+                        let temp = currentOrderState[index];
+                        currentOrderState[index] = currentOrderState[index - 1];
+                        currentOrderState[index - 1] = temp;
+                        renderOrderingList();
+                    }
+                };
+
+                const downBtn = document.createElement('button');
+                downBtn.className = 'w-8 h-8 flex items-center justify-center bg-slate-700 border border-slate-600 rounded-lg text-white hover:bg-slate-600 active:scale-95 text-xs font-bold';
+                downBtn.innerText = '▼';
+                downBtn.disabled = index === currentOrderState.length - 1;
+                if(index === currentOrderState.length - 1) downBtn.style.opacity = '0.3';
+                downBtn.onclick = () => {
+                    if (index < currentOrderState.length - 1) {
+                        let temp = currentOrderState[index];
+                        currentOrderState[index] = currentOrderState[index + 1];
+                        currentOrderState[index + 1] = temp;
+                        renderOrderingList();
+                    }
+                };
+
+                btnGroup.appendChild(upBtn);
+                btnGroup.appendChild(downBtn);
+                row.appendChild(itemText);
+                row.appendChild(btnGroup);
+                listContainer.appendChild(row);
+            });
+            
+            submitBtn.classList.remove('hidden');
+        }
+
+        renderOrderingList();
+
+        submitBtn.onclick = () => {
+            let allCorrect = true;
+            for (let i = 0; i < qData.items.length; i++) {
+                if (currentOrderState[i] !== qData.items[i]) {
+                    allCorrect = false;
+                    break;
+                }
+            }
+            validateQuiz(allCorrect);
+        };
+    }
+
+    let btnAi = document.getElementById('btn-ai-tutor');
+    let aiMsg = document.getElementById('ai-tutor-message');
+    aiMsg.classList.add('hidden');
+    
+    if (aiTutorUses > 0) {
+        btnAi.classList.remove('hidden');
+        btnAi.disabled = false;
+        btnAi.style.opacity = 1;
+        document.getElementById('ai-count').innerText = aiTutorUses;
+    } else {
+        btnAi.classList.remove('hidden');
+        btnAi.disabled = true;
+        btnAi.style.opacity = 0.5;
+        document.getElementById('ai-count').innerText = 0;
+    }
+
+    btnAi.onclick = () => {
+        if (aiTutorUses > 0) {
+            aiTutorUses--;
+            document.getElementById('ai-count').innerText = aiTutorUses;
+            btnAi.disabled = true;
+            btnAi.style.opacity = 0.5;
+            
+            let questionText = qData.q || "";
+            aiMsg.innerHTML = generateAIHint(questionText);
+            aiMsg.classList.remove('hidden');
+            playSound('coin'); 
+        }
+    };
 
     document.getElementById('quiz-modal').classList.remove('hidden');
 }
@@ -1367,26 +1963,36 @@ function triggerQuiz(r, c) {
 function validateQuiz(isCorrect) {
     document.getElementById('quiz-modal').classList.add('hidden');
     if (isCorrect) {
-        playSound('powerup'); score += 100; updateHUD(); spawnFloatingText("BENAR! +100", player.x, player.y-20, '#4caf50');
+        playSound('powerup'); 
+        score += 100; 
+        updateHUD(); 
+        spawnFloatingText("BENAR! +100", player.x, player.y-20, '#10b981');
         mapTiles[activeQuizTargetR][activeQuizTargetC].type = 6; 
         mapTiles[activeQuizTargetR][activeQuizTargetC].bumpY = -10;
         answeredQuestions++; 
+        
+        showMessage("Keren !!! Jawabannya Benar", "Lanjut Main", () => {
+            gameState = 'playing';
+        }, true);
     } else {
-        playSound('bump'); spawnFloatingText("SALAH!", player.x, player.y-20, '#e52521');
+        playSound('bump'); 
+        spawnFloatingText("SALAH!", player.x, player.y-20, '#ef4444');
         mapTiles[activeQuizTargetR][activeQuizTargetC].bumpY = -10; 
+        
+        showMessage("Tidak apa-apa, belajar lagi ya !", "Coba Lagi", () => {
+            gameState = 'playing';
+        }, false);
     }
-    gameState = 'playing';
 }
 
-/** LIBRARY SYSTEM */
 const libPages = [
-    "<b>1. Pengertian Puasa</b><br>Puasa adalah menahan diri dari segala sesuatu yang membatalkan puasa seperti makan, minum, dan hal-hal lain yang membatalkan, mulai dari terbit fajar hingga terbenam matahari, dengan niat karena Allah SWT.<br><br>Secara bahasa, puasa berasal dari kata 'shaum' yang berarti menahan diri.<br><br>Secara istilah syariat, puasa berarti menahan diri dari makan, minum, dan segala yang membatalkan dengan niat pada waktu tertentu.<br><br><b>2. Dasar Hukum Puasa</b><br>Dasar hukum puasa terdapat dalam Al-Qur'an dan Hadis.<br><b>a. Al-Qur'an</b><br>Allah SWT berfirman dalam QS. Al-Baqarah ayat 183 yang menunjukkan bahwa puasa hukumnya wajib bagi setiap muslim yang memenuhi syarat.<br><b>b. Hadis</b><br>Rasulullah SAW bersabda tentang rukun Islam, salah satunya berpuasa di bulan Ramadan (HR. Bukhari dan Muslim).",
+    "<b>1. AI di Rumah (Smart Home)</b><br>Internet of Things (IoT) menghubungkan perangkat rumah tangga kita ke internet secara cerdas.<br><br>• <i>Smart Speaker:</i> Menggunakan asisten virtual cerdas untuk menjawab instruksi suara secara interaktif.<br>• <i>Smart Vacuum:</i> Robot penyedot debu otomatis yang mengenali bentuk lantai rumah agar tidak jatuh atau menabrak rintangan.<br>• <i>Smart Lighting:</i> Menghemat pemakaian listrik dengan mematikan lampu secara cerdas menggunakan deteksi sensor gerak.",
     
-    "<b>3. Syarat Wajib Puasa</b><br>Syarat yang menyebabkan seseorang wajib menjalankan puasa:<br><ul><li>Beragama Islam</li><li>Baligh (dewasa)</li><li>Berakal sehat</li><li>Mampu menjalankan puasa</li><li>Tidak dalam keadaan haid atau nifas bagi perempuan</li></ul><br><b>4. Syarat Sah Puasa</b><br>Syarat agar puasa dianggap sah menurut syariat:<br><ul><li>Beragama Islam</li><li>Berakal sehat</li><li>Mumayyiz (dapat membedakan baik dan buruk)</li><li>Suci dari haid dan nifas</li><li>Dilaksanakan pada waktu yang diperbolehkan untuk berpuasa</li></ul>",
+    "<b>2. Dunia Sekolah Digital</b><br>Integrasi platform digital melahirkan ekosistem belajar masa kini.<br><br>• <i>Learning Management System (LMS):</i> Portal online terintegrasi untuk melihat rapor, materi pelajaran, dan mengumpulkan tugas sekolah.<br>• <i>Virtual Reality (VR):</i> Membawa murid menjelajahi ruang simulasi interaktif sejarah masa lalu atau organ tubuh manusia dalam format 3D.",
     
-    "<b>5. Rukun Puasa</b><br>Hal yang harus dilakukan dalam puasa:<br><ul><li><b>Niat:</b> Dilakukan pada malam hari sebelum fajar untuk puasa wajib.</li><li><b>Menahan diri:</b> Dari segala yang membatalkan puasa dari terbit fajar hingga terbenam matahari.</li></ul><br><b>6. Hal-hal yang Membatalkan Puasa</b><br><ol><li>Makan dan minum dengan sengaja</li><li>Muntah dengan sengaja</li><li>Berhubungan suami istri di siang hari</li><li>Keluar mani dengan sengaja</li><li>Haid atau nifas</li><li>Gila atau hilang akal</li><li>Murtad (keluar dari Islam)</li></ol>",
+    "<b>3. AI di Kehidupan Sehari-hari</b><br>Kecerdasan Buatan membantu aktivitas manusia di berbagai sektor luar ruangan secara real-time.<br><br>• <i>Peta Digital Cerdas:</i> Menganalisis kepadatan jalan raya secara langsung untuk mencari jalur bebas macet tercepat.<br>• <i>Sistem Rekomendasi:</i> Mempelajari preferensi musik atau film kesukaan kita untuk menampilkan opsi baru yang relevan.",
     
-    "<b>7. Hal-hal yang Makruh Saat Puasa</b><br>Perbuatan yang sebaiknya dihindari saat berpuasa:<br><ul><li>Berkumur secara berlebihan</li><li>Menggosok gigi setelah waktu dzuhur</li><li>Mencicipi makanan tanpa kebutuhan</li><li>Berbicara kotor atau berbohong</li><li>Bermalas-malasan</li></ul><br><b>8. Jenis-jenis Puasa</b><br><b>A. Puasa Wajib:</b> Ramadan, Qadha, Nazar, Kafarat.<br><b>B. Puasa Sunnah:</b> Senin dan Kamis, Arafah (9 Dzulhijjah), Asyura (10 Muharram), Tasu’a (9 Muharram), 6 hari bulan Syawal, Puasa Daud."
+    "<b>4. Menyongsong Masa Depan AI</b><br>AI dirancang untuk menjadi kolaborator manusia dalam memecahkan masalah besar.<br><br>• <i>Computer Vision:</i> Membahu mobil pintar (self-driving) mendeteksi marka jalan dan pejalan kaki demi keselamatan berkendara.<br>• <i>AI Medis:</i> Menganalisis ribuan data kesehatan dengan cepat untuk membantu diagnosa dokter agar semakin akurat."
 ];
 let currentLibPage = 0;
 
@@ -1414,7 +2020,6 @@ document.getElementById('lib-close').onclick = () => {
     gameState = 'pipe_transition'; 
 };
 
-/** MENGIRIM SKOR KE DATABASE SERVER GAS */
 function submitScoreToGAS() {
     if(score > 0 && currentPlayer.name !== '') {
         const data = new URLSearchParams();
@@ -1424,7 +2029,7 @@ function submitScoreToGAS() {
         
         fetch(GAS_URL, { 
             method: 'POST', 
-            mode: 'no-cors', // Menghindari error blokir saat kirim (meski tidak bisa baca respon balikan server)
+            mode: 'no-cors', 
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: data 
         })
@@ -1433,7 +2038,6 @@ function submitScoreToGAS() {
     }
 }
 
-/** LEADERBOARD GAS */
 function showLeaderboard() {
     document.getElementById('main-menu').classList.add('hidden');
     document.getElementById('leaderboard-modal').classList.remove('hidden');
@@ -1453,7 +2057,6 @@ function showLeaderboard() {
         .then(data => {
             lbLoading.style.display = 'none';
             if (data && data.length > 0) {
-                // Urutkan skor dari yang paling tinggi
                 data.sort((a,b) => b.score - a.score);
                 
                 podiumContainer.classList.remove('hidden');
@@ -1463,7 +2066,7 @@ function showLeaderboard() {
                 
                 let html = "";
                 for(let i=3; i<data.length; i++) {
-                    let isMe = data[i].name === currentPlayer.name ? "style='background:rgba(76,175,80,0.2);'" : "";
+                    let isMe = data[i].name === currentPlayer.name ? "style='background:rgba(99,102,241,0.25);'" : "";
                     html += `<div class='lb-item' ${isMe}><span class='lb-rank'>#${i+1}</span><div class='lb-name'>${data[i].name}<span class='lb-school'>${data[i].school}</span></div><span class='lb-pts'>${data[i].score}</span></div>`;
                 }
                 lbList.innerHTML = html; lbList.classList.remove('hidden');
@@ -1473,18 +2076,62 @@ function showLeaderboard() {
         })
         .catch(err => {
             lbLoading.style.display = 'block'; 
-            lbLoading.innerText = 'Gagal memuat data. Cek kode GAS Anda.'; 
+            lbLoading.innerText = 'Gagal memuat data. Sedang offline atau menggunakan mode simulasi.'; 
             console.error(err); 
         });
 }
 document.getElementById('leaderboard-btn').onclick = showLeaderboard;
 document.getElementById('btn-close-lb').onclick = () => { document.getElementById('leaderboard-modal').classList.add('hidden'); document.getElementById('main-menu').classList.remove('hidden'); };
 
-/** UI LOGIC & EVENTS */
+document.getElementById('guide-btn').onclick = () => {
+    document.getElementById('guide-modal').classList.remove('hidden');
+};
+document.getElementById('btn-close-guide').onclick = () => {
+    document.getElementById('guide-modal').classList.add('hidden');
+};
+
 function updateHUD() {
     document.getElementById('ui-lives').innerText = lives;
     document.getElementById('ui-score').innerText = score;
-    document.getElementById('ui-level').innerText = currentLevel;
+    let label = "Level 1: AI di Rumah";
+    if(currentLevel === 2) label = "Level 2: Dunia Sekolah Digital";
+    else if(currentLevel === 3) label = "Level 3: AI di Kehidupan Sehari-hari";
+    document.getElementById('ui-level-name').innerText = label;
+}
+
+function generateAIHint(questionText) {
+    const text = questionText.toLowerCase();
+    let hint = "🤖 <b>AI Tutor:</b> ";
+    
+    if (text.includes("kepanjangan ai")) {
+        return hint + "Cari istilah bahasa Inggris yang berarti 'Kecerdasan Buatan'. Kata pertamanya adalah <i>Artificial</i> dan kata keduanya adalah <i>Intelligence</i>!";
+    } else if (text.includes("di rumah adalah")) {
+        return hint + "Pilihlah alat pembersih lantai otomatis pintar yang dapat bergerak mandiri menyedot debu di sekitarnya!";
+    } else if (text.includes("smart tv")) {
+        return hint + "Sistem rekomendasi AI bekerja dengan mempelajari video atau film yang sering kamu tonton sebelumnya agar kamu tidak bingung memilih tayangan baru.";
+    } else if (text.includes("face unlock")) {
+        return hint + "Fitur keamanan modern ini memindai titik-titik koordinat pada wajahmu (seperti mata dan hidung) untuk membuka kunci ponsel.";
+    } else if (text.includes("dibuat untuk")) {
+        return hint + "AI dirancang sebagai alat bantu pintar yang diciptakan khusus untuk meringankan dan mempermudah pekerjaan sehari-hari manusia.";
+    } else if (text.includes("teknologi berikut") || text.includes("chatgpt") || text.includes("translate") || text.includes("lens") || text.includes("maps")) {
+        return hint + "Ingat pasangan fungsinya:<br>• <b>ChatGPT:</b> Meringkas teks panjang.<br>• <b>Google Translate:</b> Menerjemahkan bahasa.<br>• <b>Google Lens:</b> Mengenali objek visual via kamera.<br>• <b>Google Maps:</b> Menavigasi rute berkendara.";
+    } else if (text.includes("langkah") && text.includes("belajar")) {
+        return hint + "Susun urutan yang logis: kamu harus membuka aplikasinya terlebih dahulu, kemudian menuliskan pertanyaan, lalu membaca jawabannya, memvalidasi faktanya, baru merangkum dengan bahasamu sendiri!";
+    } else if (text.includes("mencari informasi")) {
+        return hint + "Alur logisnya: tentukan topik riset, ajukan ke AI, baca responsnya, bandingkan kebenarannya dengan buku referensi, lalu simpulkan secara bijak!";
+    } else if (text.includes("membantu dokter") || text.includes("medis")) {
+        return hint + "Urutannya: pasien diperiksa dahulu, AI membantu menganalisis hasil gambar medis, AI menyarankan rekomendasi, dokter memverifikasi hasil, baru dokter memutuskan tindakan terbaik.";
+    } else if (text.includes("etis") || text.includes("tidak etis")) {
+        return hint + "Tindakan yang melatih pemikiran, kejujuran akademis, dan menyebutkan sumber adalah <b>Etis</b>. Menggunakan AI untuk menyontek massal atau menyebarkan hoaks adalah <b>Tidak Etis</b>!";
+    } else if (text.includes("membantu manusia") || text.includes("tidak tepat")) {
+        return hint + "Menggunakan AI untuk membuat draf ringkasan atau mencari bahan referensi itu membantu manusia. Namun, menyerahkan tugas secara buta atau menyontek adalah tidak tepat.";
+    } else if (text.includes("pekerjaan") || text.includes("empati")) {
+        return hint + "AI sangat andal dalam analisis data yang rumit, namun aspek-aspek kemanusiaan seperti rasa empati dan kasih sayang tetap membutuhkan sentuhan manusia seutuhnya!";
+    } else if (text.includes("google maps") && text.includes("rute")) {
+        return hint + "Alur navigasi: tentukan lokasi tujuan, biarkan AI menghitung jalur alternatif tercepat, pilih rute terbaik, mulailah bergerak, dan Anda akan tiba di tujuan!";
+    }
+    
+    return hint + "Gunakan logika berpikir secara perlahan, carilah keterkaitan antara teknologi dan manfaat fungsionalnya!";
 }
 
 document.getElementById('login-submit-btn').onclick = () => {
@@ -1507,6 +2154,46 @@ document.getElementById('fs-btn-login').addEventListener('click', toggleFullscre
 document.getElementById('fs-btn-main').addEventListener('click', toggleFullscreen);
 document.getElementById('fullscreen-hud-btn').addEventListener('click', toggleFullscreen);
 
+function setZoom(level) {
+    zoomLevel = level;
+    document.querySelectorAll('.ui-scale-wrapper').forEach(el => {
+        el.style.transform = `scale(${zoomLevel})`;
+    });
+}
+
+document.querySelectorAll('.zoom-in-global').forEach(btn => {
+    btn.addEventListener('click', () => setZoom(Math.min(2.0, zoomLevel + 0.1)));
+});
+
+document.querySelectorAll('.zoom-out-global').forEach(btn => {
+    btn.addEventListener('click', () => setZoom(Math.max(0.4, zoomLevel - 0.1)));
+});
+
+const char1Btn = document.getElementById('char-1-btn');
+const char2Btn = document.getElementById('char-2-btn');
+
+if (char1Btn && char2Btn) {
+    char1Btn.addEventListener('click', () => {
+        selectedCharacterUrl = "https://imgur.com/exLjZJT.png";
+        assets.player.src = selectedCharacterUrl;
+        char1Btn.classList.add('border-yellow-400');
+        char1Btn.classList.remove('border-transparent');
+        char2Btn.classList.add('border-transparent');
+        char2Btn.classList.remove('border-yellow-400');
+        playSound('coin');
+    });
+
+    char2Btn.addEventListener('click', () => {
+        selectedCharacterUrl = "https://imgur.com/hxPK57c.png";
+        assets.player.src = selectedCharacterUrl;
+        char2Btn.classList.add('border-yellow-400');
+        char2Btn.classList.remove('border-transparent');
+        char1Btn.classList.add('border-transparent');
+        char1Btn.classList.remove('border-yellow-400');
+        playSound('coin');
+    });
+}
+
 function showMainMenu() {
     gameState = 'menu'; stopBGM();
     document.getElementById('hud').classList.add('hidden');
@@ -1517,7 +2204,8 @@ function showMainMenu() {
 document.getElementById('start-btn').onclick = () => {
     document.getElementById('main-menu').classList.add('hidden');
     document.getElementById('hud').classList.remove('hidden');
-    if('ontouchstart' in window || navigator.maxTouchPoints > 0) { document.getElementById('touch-controls').classList.remove('hidden'); }
+    document.getElementById('touch-controls').classList.remove('hidden');
+    
     score = 0; lives = 3; loadLevel(1);
 };
 
@@ -1535,12 +2223,42 @@ window.addEventListener('keyup', e => {
     if(e.code === 'ArrowDown' || e.code === 'KeyS') keys.down = false;
 });
 
-const bindTouch = (id, key) => {
+const bindControl = (id, key) => {
     const el = document.getElementById(id);
-    el.addEventListener('touchstart', (e)=>{ e.preventDefault(); if(gameState==='playing') keys[key]=true; el.classList.add('active');});
-    el.addEventListener('touchend', (e)=>{ e.preventDefault(); keys[key]=false; el.classList.remove('active');});
+    const startAction = (e) => { e.preventDefault(); if(gameState==='playing') keys[key]=true; el.classList.add('active'); };
+    const endAction = (e) => { e.preventDefault(); keys[key]=false; el.classList.remove('active'); };
+    
+    el.addEventListener('touchstart', startAction, {passive: false});
+    el.addEventListener('touchend', endAction, {passive: false});
+    el.addEventListener('touchcancel', endAction, {passive: false});
+    
+    el.addEventListener('mousedown', startAction);
+    el.addEventListener('mouseup', endAction);
+    el.addEventListener('mouseleave', endAction);
 };
-bindTouch('t-left', 'left'); bindTouch('t-right', 'right'); bindTouch('t-jump', 'jump'); bindTouch('t-down', 'down');
+bindControl('t-left', 'left'); bindControl('t-right', 'right'); bindControl('t-jump', 'jump'); bindControl('t-down', 'down');
+
+// SPLASH SCREEN TIMER TICK
+let splashProgress = 0;
+let splashTimer = setInterval(() => {
+    splashProgress += Math.floor(Math.random() * 15) + 5; 
+    if (splashProgress >= 100) {
+        splashProgress = 100;
+        clearInterval(splashTimer);
+        setTimeout(() => {
+            let splash = document.getElementById('splash-screen');
+            splash.style.opacity = '0'; 
+            setTimeout(() => {
+                splash.classList.add('hidden');
+                document.getElementById('login-menu').classList.remove('hidden');
+                gameState = 'login';
+                document.body.classList.add('check-orientation');
+            }, 500); 
+        }, 600); 
+    }
+    document.getElementById('splash-loading-fill').style.width = splashProgress + '%';
+    document.getElementById('splash-loading-text').innerText = 'MEMUAT DUNIA AI... ' + splashProgress + '%';
+}, 200);
 
 function loop() {
     if (gameState === 'playing') { updateGame(); drawGame(); } 
