@@ -591,12 +591,12 @@ const maps = [
         "                                                                 ",
         "                                                                 ",
         "                                                                 ",
-        "                                                                 ",
+        "                         Q                                       ",
         "                                            Q                    ",
         "                        B?M                                      ",
-        "      M    Q                                                   S ",
+        "      M                                                        S ",
         "                  B?Q?BBZBB                BBBBB                 ",
-        "         E               BBB                               QN    ",
+        "                         BBB                               QN    ",
         "      B?B   L            BB        E      P                      ",
         " R R      R l      X     R         R      p   E               R  ",
         "GGGGGGGGGGGGGG  GGGGGGGGGGGGGGGGG GGGGGGGGGGGGGGGGGGGGGGGGGGGGGG ",
@@ -607,7 +607,7 @@ const maps = [
         "                        NBBBB  BBBBBB                            ",
         "                        B  Q        B                            ",
         "                        B     M     BB                           ",
-        "                        B  E     E  OB                           ",
+        "                        B        E  OB                           ",
         "                        GGGGGGGGGGGGGGG                          ",
         "                                                                 "
     ],
@@ -620,7 +620,7 @@ const maps = [
         "                M                                  Q                                               ",
         "                       B?B                                                                         ",
         "      Q                               ?N       E                   M                GGGGGGGGGGGGGG ",
-        "         E      BB   B???ZBBBB     Q           BBBBB?BB                    E         B             ",
+        "                BB   B???ZBBBB     Q           BBBBB?BB                    E         B             ",
         "     BBBBB     BBB                          BBB                 Q       BB?BBNZ      B             ",
         "              BBBBB             P       X   B?B                                      B             ",
         " R      R     BBBBBB   E        p     E X    R          E                  RR        B             ",
@@ -872,16 +872,19 @@ class Mushroom {
         
         if (player.x < this.x + this.w && player.x + player.width > this.x && player.y < this.y + this.h && player.y + player.height > this.y) {
             playSound('powerup'); 
+            // Semua jamur sekarang menambah nyawa (+1-UP) demi kepuasan petualangan pemain
+            lives++; 
             if (this.type === 'big') {
                 player.makeBig(); 
                 score += 50; 
+                spawnFloatingText("BIG + NYAWA!", player.x, player.y - 20, '#10b981');
             } else if (this.type === '1up') {
-                lives++; 
                 score += 100;
-                spawnFloatingText("1-UP", player.x, player.y - 20, '#10b981');
+                spawnFloatingText("1-UP + BONUS NYAWA!", player.x, player.y - 20, '#10b981');
             } else if (this.type === 'fly') {
                 player.makeFly();
                 score += 100;
+                spawnFloatingText("FLY + NYAWA!", player.x, player.y - 20, '#3b82f6');
             }
             updateHUD(); 
             this.active = false;
@@ -1988,7 +1991,7 @@ function validateQuiz(isCorrect) {
 const libPages = [
     "<b>1. AI di Rumah (Smart Home)</b><br>Internet of Things (IoT) menghubungkan perangkat rumah tangga kita ke internet secara cerdas.<br><br>• <i>Smart Speaker:</i> Menggunakan asisten virtual cerdas untuk menjawab instruksi suara secara interaktif.<br>• <i>Smart Vacuum:</i> Robot penyedot debu otomatis yang mengenali bentuk lantai rumah agar tidak jatuh atau menabrak rintangan.<br>• <i>Smart Lighting:</i> Menghemat pemakaian listrik dengan mematikan lampu secara cerdas menggunakan deteksi sensor gerak.",
     
-    "<b>2. Dunia Sekolah Digital</b><br>Integrasi platform digital melahirkan ekosistem belajar masa kini.<br><br>• <i>Learning Management System (LMS):</i> Portal online terintegrasi untuk melihat rapor, materi pelajaran, dan mengumpulkan tugas sekolah.<br>• <i>Virtual Reality (VR):</i> Membawa murid menjelajahi ruang simulasi interaktif sejarah masa lalu atau organ tubuh manusia dalam format 3D.",
+    "<b>2. Dunia Sekolah Digital</b><br>Integration platform digital melahirkan ekosistem belajar masa kini.<br><br>• <i>Learning Management System (LMS):</i> Portal online terintegrasi untuk melihat rapor, materi pelajaran, dan mengumpulkan tugas sekolah.<br>• <i>Virtual Reality (VR):</i> Membawa murid menjelajahi ruang simulasi interaktif sejarah masa lalu atau organ tubuh manusia dalam format 3D.",
     
     "<b>3. AI di Kehidupan Sehari-hari</b><br>Kecerdasan Buatan membantu aktivitas manusia di berbagai sektor luar ruangan secara real-time.<br><br>• <i>Peta Digital Cerdas:</i> Menganalisis kepadatan jalan raya secara langsung untuk mencari jalur bebas macet tercepat.<br>• <i>Sistem Rekomendasi:</i> Mempelajari preferensi musik atau film kesukaan kita untuk menampilkan opsi baru yang relevan.",
     
@@ -2006,7 +2009,7 @@ function updateLibraryUI() {
     document.getElementById('lib-content-area').innerHTML = libPages[currentLibPage];
     document.getElementById('lib-page-indicator').innerText = `${currentLibPage + 1} / ${libPages.length}`;
     document.getElementById('lib-prev').style.display = currentLibPage > 0 ? 'inline-block' : 'none';
-    document.getElementById('lib-next').style.display = currentLibPage < libPages.length - 1 ? 'inline-block' : 'none';
+    document.getElementById('lib-next').style.display = currentLevel < libPages.length ? 'inline-block' : 'none';
 }
 
 document.getElementById('lib-prev').onclick = () => { if(currentLibPage>0) { currentLibPage--; updateLibraryUI(); }};
